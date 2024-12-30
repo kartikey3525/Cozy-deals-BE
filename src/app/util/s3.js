@@ -1,4 +1,4 @@
-var aws = require("aws-sdk");
+// var aws = require("aws-sdk");
 var multer = require("multer");
 var multerS3 = require("multer-s3");
 

@@ -1,7 +1,7 @@
 {
   "development": {
-    "PORT": 4000,
-    "MONGODB_URI": "",
+    "PORT": 8080,
+    "MONGODB_URI": "mongodb+srv://priyankakridemo93:c8cfRdrj8wcLog9U@cluster0.wwro7.mongodb.net/serviceApplication",
     "secret_token": "",
     "crypto_secret_key": "",
     "limit": 20,
@@ -10,8 +10,8 @@
     "SecretAccessKey": ""
   },
   "prod": {
-    "PORT": 5000,
-    "MONGODB_URI": "",
+    "PORT": 8080,
+    "MONGODB_URI": "mongodb+srv://priyankakridemo93:c8cfRdrj8wcLog9U@cluster0.wwro7.mongodb.net/serviceApplication",
     "secret_token": "",
     "crypto_secret_key": "",
     "limit": 20,

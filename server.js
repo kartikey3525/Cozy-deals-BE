@@ -34,16 +34,6 @@ app.use(
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, "public")));
 
-// Serialize the user into the session
-passport.serializeUser((user, done) => {
-  done(null, user);
-});
-
-// Deserialize the user from the session
-passport.deserializeUser((user, done) => {
-  done(null, user);
-});
-
 app.use(express.json());
 
 // Serve static files from the "public" directory
