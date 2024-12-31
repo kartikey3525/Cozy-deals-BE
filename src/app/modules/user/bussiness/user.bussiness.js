@@ -165,4 +165,48 @@ const login = async (body) => {
   };
 };
 
+// const google = async (body) => {
+//   let { email, googleData, fcmToken } = body;
+
+//   if (!validator.isEmail(email)) throw "email must be a valid email";
+
+//   let userName = email.split("@")[0];
+
+//   let data = {
+//     googleData: googleData,
+//     fcmToken: fcmToken,
+//     isDeactivated: false,
+//     isDeleted: false,
+//   };
+
+//   let checkEmail = await User.findOne({ email });
+//   let user;
+//   if (checkEmail) {
+//     user = await User.findOneAndUpdate(
+//       { email },
+//       {
+//         $set: data,
+//       },
+//       { new: true, upsert: true }
+//     );
+//   } else {
+//     data.name = googleData.displayName;
+//     data.userName = userName;
+//     data.profile = googleData._json.picture;
+//     user = await User.findOneAndUpdate(
+//       { email },
+//       {
+//         $set: data,
+//       },
+//       { new: true, upsert: true }
+//     );
+//   }
+
+//   return {
+//     msg: msg.success,
+//     token: await generateAuthToken(user),
+//     data: user,
+//   };
+// };
+
 module.exports = { sendOTP, verifyOTP, login };
