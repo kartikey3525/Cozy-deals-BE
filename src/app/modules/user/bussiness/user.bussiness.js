@@ -129,4 +129,40 @@ const verifyOTP = async (body) => {
   }
 };
 
-module.exports = { sendOTP, verifyOTP };
+const login = async (body) => {
+  let { emailPhone, password, fcmToken } = body;
+
+  if (!isValid(emailPhone) || !isValid(password)) {
+    throw "provide required fields";
+  }
+
+  let user = await User.findOneAndUpdate(
+    {
+      $or: [
+        { phone: emailPhone },
+        { email: emailPhone },
+        { userName: emailPhone },
+      ],
+      isDeleted: false,
+      isVerified: true,
+    },
+    { $set: { fcmToken: fcmToken, isDeactivated: false } },
+    { new: true }
+  );
+  if (!user) throw msg.userNotFound;
+  let decryptPassword = CryptoJS.AES.decrypt(
+    user.password,
+    process.env.crypto_secret_key
+  ).toString(CryptoJS.enc.Utf8);
+
+  if (decryptPassword != password) throw msg.invalidPassword;
+
+  return {
+    role: user.role,
+    roleId: user.roleId,
+    token: await generateAuthToken(user),
+    _id: user._id,
+  };
+};
+
+module.exports = { sendOTP, verifyOTP, login };
