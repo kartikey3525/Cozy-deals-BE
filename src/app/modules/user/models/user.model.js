@@ -7,12 +7,12 @@ const UserSchema = new mongoose.Schema(
       type: String,
       trim: true,
       lowercase: true,
-      unique: true,
+      // unique: true,
     },
     phone: {
       type: String,
       trim: true,
-      unique: true,
+      // unique: true,
     },
     userName: {
       type: String,
@@ -29,6 +29,13 @@ const UserSchema = new mongoose.Schema(
     password: {
       type: String,
       trim: true,
+    },
+    otp: {
+      type: String,
+      trim: true,
+    },
+    otpDate: {
+      type: Date,
     },
     countryCode: {
       type: Number,

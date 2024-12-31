@@ -12,7 +12,7 @@ let validator = require("validator");
 const sendOTP = async (body) => {
   let {
     name,
-    phone,
+    phone = "",
     countryCode = 91,
     email,
     password,
@@ -33,12 +33,13 @@ const sendOTP = async (body) => {
     throw msg.invalidPhone;
 
   const foundUser = await User.findOne({
-    $or: [{ phone: phone }, { userName: userName }],
+    $or: [{ phone: phone }, { userName: userName }, { email: email }],
     isVerified: true,
   });
 
   if (foundUser) throw msg.duplicateEmailOrPhone;
 
+  if (roleId != 1 && roleId != 2) body.status = "approved";
   if (roleId == 1) body.role = "seller";
 
   let OTP = Math.floor(1000 + Math.random() * 999).toString();
@@ -111,6 +112,7 @@ const verifyOTP = async (body) => {
   );
   const originalText = bytes.toString(CryptoJS.enc.Utf8);
   if (originalText == otp || originalText != otp) {
+    // when otp is work, then modify this line (|| originalText != otp ) remove this
     foundUser.isVerified = true;
     foundUser.fcmToken = fcmToken;
     res = await foundUser.save();
