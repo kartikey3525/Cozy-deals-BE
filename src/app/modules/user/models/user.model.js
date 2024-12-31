@@ -7,23 +7,19 @@ const UserSchema = new mongoose.Schema(
       type: String,
       trim: true,
       lowercase: true,
+      unique: true,
+    },
+    phone: {
+      type: String,
+      trim: true,
+      unique: true,
     },
     userName: {
       type: String,
       trim: true,
       unique: true,
     },
-    bio: {
-      type: String,
-      trim: true,
-      default: "bio",
-    },
     googleData: {},
-    facebookData: {},
-    phone: {
-      type: String,
-      trim: true,
-    },
     profile: {
       type: String,
       trim: true,
@@ -34,49 +30,32 @@ const UserSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    countryCode: {
+      type: Number,
+      default: 91,
+    },
     roleId: {
       type: Number,
       default: 0,
-    }, // 0 for student and 1 for admin
+    }, // 0 for buyer, 1 for seller, 2 for admin
     role: {
       type: String,
-      enum: ["admin", "user"],
-      default: "user",
+      enum: ["buyer", "seller", "admin"],
+      default: "buyer",
     },
-    profession: {
-      type: String,
-      trim: true,
-      default: "profession",
-    },
-    document: {},
-    userType: {
-      type: String,
-      enum: ["blue", "grey", "green"],
-      default: "blue",
+    isVerified: {
+      type: Boolean,
+      default: false,
     },
     status: {
       type: String,
-      enum: ["pending", "approved", "declined"],
+      enum: ["pending", "approved"],
       default: "pending",
     },
     fcmToken: {
       type: String,
     },
-    adminMessage: {
-      type: String,
-    },
-    bankAccountNumber: {
-      type: String,
-      trim: true,
-    },
-    accountHolderName: {
-      type: String,
-      trim: true,
-    },
-    bankIfscCode: {
-      type: String,
-      trim: true,
-    },
+    isAcceptTermConditions: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
     isDeactivated: { type: Boolean, default: false },
   },

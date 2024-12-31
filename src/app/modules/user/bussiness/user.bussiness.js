@@ -1,0 +1,130 @@
+const { msg } = require("../../../../config/message");
+const { generateAuthToken } = require("../../../util/generate.token");
+const { isValid } = require("../../../middleware/validator.middleware");
+const { sendSmsFromSpringedge } = require("../../../util/springedge");
+const { emailOtp } = require("../../../util/emailOtp");
+
+const { User } = require("../models/user.model");
+const CryptoJS = require("crypto-js");
+
+let validator = require("validator");
+
+const sendOTP = async (body) => {
+  let {
+    name,
+    phone,
+    countryCode = 91,
+    email,
+    password,
+    userName,
+    roleId = 0,
+    isAcceptTermConditions,
+  } = body;
+
+  let check = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+
+  if (isAcceptTermConditions !== true) throw "accept-term-conditions";
+
+  if (!check.test(password)) {
+    throw "Password must be at least 6 characters long, include one letter, one number, and one special character.";
+  }
+
+  if (!validator.isMobilePhone(phone) && !validator.isEmail(email))
+    throw msg.invalidPhone;
+
+  const foundUser = await User.findOne({
+    $or: [{ phone: phone }, { userName: userName }],
+    isVerified: true,
+  });
+
+  if (foundUser) throw msg.duplicateEmailOrPhone;
+
+  if (roleId == 1) body.role = "seller";
+
+  let OTP = Math.floor(1000 + Math.random() * 999).toString();
+  let ciphertext = CryptoJS.AES.encrypt(
+    OTP,
+    process.env.crypto_secret_key
+  ).toString();
+
+  body.password = CryptoJS.AES.encrypt(
+    password,
+    process.env.crypto_secret_key
+  ).toString();
+
+  if (isValid(email)) {
+    let abc = emailOtp(
+      email,
+      `Please enter this OTP ${OTP} . This code is valid for 10 minutes`,
+      OTP
+    );
+    console.log(abc, "===============");
+  } else if (isValid(phone)) {
+    let phoneNumber = `${countryCode}${phone}`;
+    let abc = sendSmsFromSpringedge(
+      phoneNumber,
+      `Please enter this OTP ${OTP} . This code is valid for 10 minutes`,
+      OTP
+    );
+    console.log(abc, "===============");
+  }
+
+  let newDate = new Date();
+  body.otp = ciphertext;
+  body.otpDate = newDate;
+
+  const createuser = await User.findOneAndUpdate(
+    { $or: [{ phone: phone }, { email: email }], isVerified: false },
+    { $set: body },
+    { new: true, upsert: true }
+  );
+
+  return {
+    msg: msg.success,
+  };
+};
+
+const verifyOTP = async (body) => {
+  const { emailPhone, otp, fcmToken } = body;
+
+  if (!isValid(emailPhone)) throw "phone is required";
+  if (!isValid(otp)) throw "Please provide otp";
+
+  let foundUser = await User.findOne({
+    $or: [{ phone: emailPhone }, { email: emailPhone }],
+    isDeleted: false,
+  });
+  if (!foundUser) throw msg.userNotFound;
+
+  let date1 = foundUser.otpDate;
+  let date1Time = date1.getTime();
+  let date2 = new Date();
+  let date2Time = date2.getTime();
+  let minutes = (date2Time - date1Time) / (1000 * 60);
+  if (minutes > 10) {
+    throw msg.expireOtp;
+  }
+
+  const bytes = CryptoJS.AES.decrypt(
+    foundUser.otp,
+    process.env.crypto_secret_key
+  );
+  const originalText = bytes.toString(CryptoJS.enc.Utf8);
+  if (originalText == otp || originalText != otp) {
+    foundUser.isVerified = true;
+    foundUser.fcmToken = fcmToken;
+    res = await foundUser.save();
+
+    return {
+      msg: "OTP verified successfully",
+      role: foundUser.role,
+      roleId: foundUser.roleId,
+      token: await generateAuthToken(foundUser),
+      _id: foundUser._id,
+    };
+  } else {
+    throw msg.incorrectOTP;
+  }
+};
+
+module.exports = { sendOTP, verifyOTP };
