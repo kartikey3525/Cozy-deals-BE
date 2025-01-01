@@ -5,6 +5,9 @@ const bodyParser = require("body-parser");
 const { env } = require("./src/environment/environment");
 const routes = require("./route");
 const mongoose = require("./src/app/db/mongoose");
+const {
+  socketConnections,
+} = require("./src/app/modules/chatApp/chat/chat.route");
 const port = process.env.PORT || 3000;
 
 const session = require("express-session");
@@ -45,6 +48,21 @@ app.get("/", (req, res) => {
   } catch (error) {
     return res.status(500).send(error.message);
   }
+});
+
+// socket function
+const socket = require("socket.io");
+let io = socket(server);
+io = io.of("/chat");
+
+socketConnections(io);
+
+// Socket connection event
+io.on("connection", (socket) => {
+  console.log("made socket connection", socket.id);
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+  });
 });
 
 //Mapping all modules path and path-handler
