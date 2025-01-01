@@ -158,6 +158,7 @@ const login = async (body) => {
   if (decryptPassword != password) throw msg.invalidPassword;
 
   return {
+    msg: msg.success,
     role: user.role,
     roleId: user.roleId,
     token: await generateAuthToken(user),
@@ -165,48 +166,31 @@ const login = async (body) => {
   };
 };
 
-// const google = async (body) => {
-//   let { email, googleData, fcmToken } = body;
+const google = async (body) => {
+  let { email, googleData, fcmToken } = body;
 
-//   if (!validator.isEmail(email)) throw "email must be a valid email";
+  if (!validator.isEmail(email)) throw "email must be a valid email";
 
-//   let userName = email.split("@")[0];
+  let userName = `${email.split("@")[0]}${Math.floor(Math.random() * 9999)}`;
+  body.userName = userName;
+  if (googleData && googleData._json) {
+    body.isVerified = true;
+    body.name = googleData._json.name;
+    body.profile = googleData._json.picture;
+  }
 
-//   let data = {
-//     googleData: googleData,
-//     fcmToken: fcmToken,
-//     isDeactivated: false,
-//     isDeleted: false,
-//   };
+  let user1 = await User.findOne({ email });
+  if (!user1) {
+    user1 = await User.create(body);
+  }
 
-//   let checkEmail = await User.findOne({ email });
-//   let user;
-//   if (checkEmail) {
-//     user = await User.findOneAndUpdate(
-//       { email },
-//       {
-//         $set: data,
-//       },
-//       { new: true, upsert: true }
-//     );
-//   } else {
-//     data.name = googleData.displayName;
-//     data.userName = userName;
-//     data.profile = googleData._json.picture;
-//     user = await User.findOneAndUpdate(
-//       { email },
-//       {
-//         $set: data,
-//       },
-//       { new: true, upsert: true }
-//     );
-//   }
+  return {
+    msg: msg.success,
+    role: user1.role,
+    roleId: user1.roleId,
+    token: await generateAuthToken(user1),
+    _id: user1._id,
+  };
+};
 
-//   return {
-//     msg: msg.success,
-//     token: await generateAuthToken(user),
-//     data: user,
-//   };
-// };
-
-module.exports = { sendOTP, verifyOTP, login };
+module.exports = { sendOTP, verifyOTP, login, google };

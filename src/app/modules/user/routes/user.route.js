@@ -8,10 +8,16 @@ const {
   buyerAuthenticate,
 } = require("../../../middleware/jwt.middleware");
 
-const { sendOTP, verifyOTP, login } = require("../controllers/user.controller");
+const {
+  sendOTP,
+  verifyOTP,
+  login,
+  google,
+} = require("../controllers/user.controller");
 
 router.post("/sendOTP", wrapAsync(sendOTP));
 router.post("/verifyOTP", wrapAsync(verifyOTP));
 router.post("/login", wrapAsync(login));
+router.post("/google", wrapAsync(google));
 
 module.exports = router;
