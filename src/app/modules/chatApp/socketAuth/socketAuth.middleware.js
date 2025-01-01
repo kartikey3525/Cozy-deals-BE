@@ -7,6 +7,7 @@ const socketAuth = (io) => {
 
       jwt.verify(token, process.env.secret_token, (err, user) => {
         if (err) return next(new Error("Authentication error"));
+        user.username = "name"
         socket.user = user;
         next();
       });
