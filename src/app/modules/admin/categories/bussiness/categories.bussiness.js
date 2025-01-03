@@ -82,38 +82,41 @@ const createCategory = async (user, body) => {
 };
 
 const updateCategory = async (user, body) => {
-  const { index, name } = body;
+  const { index, name, image } = body;
   if (!isValid(index)) throw "index is required";
-  if (!isValid(name)) throw "name is required";
+  let data = {};
+  if (isValid(name)) data.name = name;
+  if (isValid(image)) data.image = image;
 
   if (index.length === 1) {
     let categories = await Category.findOneAndUpdate(
       { index: index },
-      { $set: { name: name } },
+      { $set: data },
       { new: true }
     );
     if (!categories) throw "category not found";
   } else if (index.length > 1) {
-    const addNestedExam = (examArray, indexArr, depth) => {
+    const addNestedExam = (categoryArray, indexArr, depth) => {
       const currentIndex = indexArr[depth];
-      const found = examArray.find(
+      const found = categoryArray.find(
         (item) => item.index.split(".")[depth] === currentIndex
       );
 
       if (!found) throw "category not found";
 
       if (depth === indexArr.length - 1) {
-        found.name = name;
+        if (isValid(name)) found.name = name;
+        if (isValid(image)) found.image = image;
       } else {
         // Recursively go deeper
-        addNestedExam(found.exam, indexArr, depth + 1);
+        addNestedExam(found.subCategories, indexArr, depth + 1);
       }
     };
     let indexArr = index.split(".");
     const check = await Category.findOne({ index: `${indexArr[0]}` });
     if (!check) throw "category not found";
 
-    addNestedExam(check.exam, indexArr, 1);
+    addNestedExam(check.subCategories, indexArr, 1);
     await check.save();
   }
   return {
