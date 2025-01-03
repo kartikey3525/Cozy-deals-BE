@@ -150,7 +150,7 @@ const login = async (body) => {
       isDeleted: false,
       isVerified: true,
     },
-    { $set: { fcmToken: fcmToken, isDeactivated: false } },
+    { $set: { fcmToken: fcmToken } },
     { new: true }
   );
   if (!user) throw msg.userNotFound;
@@ -197,4 +197,60 @@ const google = async (body) => {
   };
 };
 
-module.exports = { sendOTP, verifyOTP, login, google };
+const updateProfile = async (user, body) => {
+  Object.keys(body).forEach((key) => {
+    if (!isValid(body[key])) delete body[key];
+  });
+  let user1 = await User.findOneAndUpdate(
+    { _id: user._id },
+    { $set: body },
+    { new: true }
+  );
+
+  return {
+    msg: msg.success,
+    data: user1,
+  };
+};
+
+const getProfile = async (user) => {
+  let user1 = await User.findOne({ _id: user._id });
+  if (!user1) throw msg.userNotFound;
+  return {
+    msg: msg.success,
+    data: user1,
+  };
+};
+
+const deleteProfile = async (user) => {
+  let user = await User.findOneAndUpdate(
+    { _id: user._id },
+    { $set: { isDeleted: true } },
+    { new: true }
+  );
+  return {
+    msg: msg.success,
+  };
+};
+
+const deactivateProfile = async (user) => {
+  let user = await User.findOneAndUpdate(
+    { _id: user._id },
+    { $set: { isDeactivated: true } },
+    { new: true }
+  );
+  return {
+    msg: msg.success,
+  };
+};
+
+module.exports = {
+  sendOTP,
+  verifyOTP,
+  login,
+  google,
+  updateProfile,
+  getProfile,
+  deleteProfile,
+  deactivateProfile,
+};

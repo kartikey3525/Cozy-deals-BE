@@ -11,16 +11,17 @@ exports.sellerAuthenticate = async (req, res, next) => {
     const auth = req.header("Authorization");
     if (!auth) throw msg.unauthorisedRequest;
     const token = auth.substr(auth.indexOf(" ") + 1);
-    let decoded = jwt.verify(token, secret);
-    const user = await User.findById(decoded._id);
+    let user = jwt.verify(token, secret);
+    // const user = await User.findById(decoded._id);
     // if (!user || user.isDeleted == true) throw msg.unauthorisedRequest;
     if (
       !user ||
-      user.roleId != 1 ||
-      user.isDeleted == true ||
-      user.isDeactivated == true
+      user.roleId != 1
+      // user.isDeleted == true ||
+      // user.isDeactivated == true
     )
       throw msg.unauthorisedRequest;
+    user.id = user._id.toString();
     req.user = user;
     return next();
   } catch (err) {
@@ -34,13 +35,13 @@ exports.buyerAuthenticate = async (req, res, next) => {
     const auth = req.header("Authorization");
     if (!auth) throw msg.unauthorisedRequest;
     const token = auth.substr(auth.indexOf(" ") + 1);
-    let decoded = jwt.verify(token, secret);
-    const user = await User.findById(decoded._id);
+    let user = jwt.verify(token, secret);
+    // const user = await User.findById(decoded._id);
     if (
       !user ||
-      user.roleId != 0 ||
-      user.isDeleted == true ||
-      user.isDeactivated == true
+      user.roleId != 0
+      // user.isDeleted == true ||
+      // user.isDeactivated == true
     )
       throw msg.unauthorisedRequest;
     user.id = user._id.toString();
@@ -57,13 +58,13 @@ exports.adminAuthenticate = async (req, res, next) => {
     const auth = req.header("Authorization");
     if (!auth) throw msg.unauthorisedRequest;
     const token = auth.substr(auth.indexOf(" ") + 1);
-    let decoded = jwt.verify(token, secret);
-    const user = await User.findById(decoded._id);
+    let user = jwt.verify(token, secret);
+    // const user = await User.findById(decoded._id);
     if (
       !user ||
-      user.roleId != 2 ||
-      user.isDeleted == true ||
-      user.isDeactivated == true
+      user.roleId != 2
+      // user.isDeleted == true ||
+      // user.isDeactivated == true
     )
       throw msg.unauthorisedRequest;
     user.id = user._id.toString();
@@ -80,13 +81,13 @@ exports.authenticate = async (req, res, next) => {
     const auth = req.header("Authorization");
     if (!auth) throw msg.unauthorisedRequest;
     const token = auth.substr(auth.indexOf(" ") + 1);
-    let decoded = jwt.verify(token, secret);
-    const user = await User.findById(decoded._id);
+    let user = jwt.verify(token, secret);
+    // const user = await User.findById(decoded._id);
     if (
-      !user ||
+      !user
       // user.roleId != 2 ||
-      user.isDeleted == true ||
-      user.isDeactivated == true
+      // user.isDeleted == true ||
+      // user.isDeactivated == true
     )
       throw msg.unauthorisedRequest;
     user.id = user._id.toString();
