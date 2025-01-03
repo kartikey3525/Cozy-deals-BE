@@ -192,37 +192,37 @@ const deleteCategory = async (user, query) => {
   if (index.length === 1) {
     let categories = await Category.findOne({ index: index });
     if (!categories) throw "category not found";
-    if (categories.exam.length > 0)
+    if (categories.subCategories.length > 0)
       throw "Unable to delete: Remove subcategories first.";
     await Category.deleteOne({ index: index });
   } else if (index.length > 1) {
-    const addNestedExam = (examArray, indexArr, depth) => {
+    const addNestedExam = (categoryArray, indexArr, depth) => {
       const currentIndex = indexArr[depth];
-      const found = examArray.find(
+      const found = categoryArray.find(
         (item) => item.index.split(".")[depth] === currentIndex
       );
 
       if (!found) throw "category not found";
 
       if (depth === indexArr.length - 1) {
-        if (found.exam.length > 0)
+        if (found.subCategories.length > 0)
           throw "Unable to delete: Remove subcategories first.";
-        for (let i = 0; i < examArray.length; i++) {
-          if (examArray[i].index === found.index) {
-            examArray.splice(i, 1);
+        for (let i = 0; i < categoryArray.length; i++) {
+          if (categoryArray[i].index === found.index) {
+            categoryArray.splice(i, 1);
             break;
           }
         }
       } else {
         // Recursively go deeper
-        addNestedExam(found.exam, indexArr, depth + 1);
+        addNestedExam(found.subCategories, indexArr, depth + 1);
       }
     };
     let indexArr = index.split(".");
     const check = await Category.findOne({ index: `${indexArr[0]}` });
     if (!check) throw "category not found";
 
-    addNestedExam(check.exam, indexArr, 1);
+    addNestedExam(check.subCategories, indexArr, 1);
     await check.save();
   }
   return {
