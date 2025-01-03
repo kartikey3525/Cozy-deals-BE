@@ -62,6 +62,13 @@ const UserSchema = new mongoose.Schema(
     fcmToken: {
       type: String,
     },
+    lastSeen: {
+      type: Date,
+    }, // Timestamp of the user's last activity
+    isOnline: {
+      type: Boolean,
+      default: false,
+    }, // Indicates if the user is currently online
     isAcceptTermConditions: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
     isDeactivated: { type: Boolean, default: false },
