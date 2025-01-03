@@ -14,11 +14,11 @@ const UserSchema = new mongoose.Schema(
       trim: true,
       // unique: true,
     },
-    userName: {
-      type: String,
-      trim: true,
-      unique: true,
-    },
+    // userName: {
+    //   type: String,
+    //   trim: true,
+    //   unique: true,
+    // },
     googleData: {},
     profile: {
       type: String,

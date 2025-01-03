@@ -12,11 +12,11 @@ let validator = require("validator");
 const sendOTP = async (body) => {
   let {
     name,
-    phone = "",
+    phone,
     countryCode = 91,
     email,
     password,
-    userName,
+    // userName,
     roleId = 0,
     isAcceptTermConditions,
   } = body;
@@ -32,15 +32,19 @@ const sendOTP = async (body) => {
   if (!validator.isMobilePhone(phone) && !validator.isEmail(email))
     throw msg.invalidPhone;
 
+  let arr = [];
+  if (isValid(email)) arr.push({ email: email });
+  if (isValid(phone)) arr.push({ phone: phone });
   const foundUser = await User.findOne({
-    $or: [{ phone: phone }, { userName: userName }, { email: email }],
+    $or: arr,
     isVerified: true,
   });
 
   if (foundUser) throw msg.duplicateEmailOrPhone;
 
-  if (roleId != 1 && roleId != 2) body.status = "approved";
+  // if (roleId != 1 && roleId != 2) body.status = "approved";
   if (roleId == 1) body.role = "seller";
+  // else if (roleId == 2) body.role = "admin";
 
   let OTP = Math.floor(1000 + Math.random() * 999).toString();
   let ciphertext = CryptoJS.AES.encrypt(
@@ -75,7 +79,7 @@ const sendOTP = async (body) => {
   body.otpDate = newDate;
 
   const createuser = await User.findOneAndUpdate(
-    { $or: [{ phone: phone }, { email: email }], isVerified: false },
+    { $or: arr, isVerified: false },
     { $set: body },
     { new: true, upsert: true }
   );
@@ -141,7 +145,7 @@ const login = async (body) => {
       $or: [
         { phone: emailPhone },
         { email: emailPhone },
-        { userName: emailPhone },
+        // { userName: emailPhone },
       ],
       isDeleted: false,
       isVerified: true,
@@ -171,8 +175,8 @@ const google = async (body) => {
 
   if (!validator.isEmail(email)) throw "email must be a valid email";
 
-  let userName = `${email.split("@")[0]}${Math.floor(Math.random() * 9999)}`;
-  body.userName = userName;
+  // let userName = `${email.split("@")[0]}${Math.floor(Math.random() * 9999)}`;
+  // body.userName = userName;
   if (googleData && googleData._json) {
     body.isVerified = true;
     body.name = googleData._json.name;
