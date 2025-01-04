@@ -93,6 +93,10 @@ const UserSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    currentShopLocationUrl: {
+      type: String,
+      trim: true,
+    },
     contactNumber: { type: String, trim: true },
     contactEmail: { type: String, trim: true },
     description: { type: String, trim: true },
@@ -107,20 +111,3 @@ const UserSchema = new mongoose.Schema(
 const User = mongoose.model("User", UserSchema);
 module.exports = { User };
 
-// urpose: Allow sellers to receive relevant product requests.
-// Fields in Seller Profile:
-// 1. Shop Name
-// 2. Owner Name
-// 3. Contact Number
-// 4. Email Address
-// 5. Business Address
-// 6. Business Scale (optional)
-// Small Business (Local)
-// • Medium Business (City-wide)
-// • Large Business (Multiple Cities/State-wide)
-// • Delivery Available: Yes/No toggle (optional)
-// • description
-// 7. Profile Picture (optional).
-// 8. Social media(optional)
-// • Location: Seller’s shop location (GPS or manual)
-// • when profile is done add “more categories option”
