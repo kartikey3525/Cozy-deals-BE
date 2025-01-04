@@ -54,7 +54,7 @@ const UserSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    status: {
+    isAdminVerified: {
       type: String,
       enum: ["pending", "approved"],
       default: "pending",

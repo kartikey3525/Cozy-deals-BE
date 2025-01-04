@@ -38,6 +38,7 @@ const sendOTP = async (body) => {
   const foundUser = await User.findOne({
     $or: arr,
     isVerified: true,
+    isDeleted: false,
   });
 
   if (foundUser) throw msg.duplicateEmailOrPhone;
@@ -79,7 +80,7 @@ const sendOTP = async (body) => {
   body.otpDate = newDate;
 
   const createuser = await User.findOneAndUpdate(
-    { $or: arr, isVerified: false },
+    { $or: arr, isVerified: false, isDeleted: false },
     { $set: body },
     { new: true, upsert: true }
   );
@@ -183,10 +184,11 @@ const google = async (body) => {
     body.profile = googleData._json.picture;
   }
 
-  let user1 = await User.findOne({ email });
-  if (!user1) {
-    user1 = await User.create(body);
-  }
+  let user1 = await User.findOneAndUpdate(
+    { email: email, isDeleted: false },
+    { $set: body },
+    { new: true, upsert: true }
+  );
 
   return {
     msg: msg.success,
@@ -202,19 +204,18 @@ const updateProfile = async (user, body) => {
     if (!isValid(body[key])) delete body[key];
   });
   let user1 = await User.findOneAndUpdate(
-    { _id: user._id },
+    { _id: user._id, isDeleted: false },
     { $set: body },
     { new: true }
   );
 
   return {
     msg: msg.success,
-    data: user1,
   };
 };
 
 const getProfile = async (user) => {
-  let user1 = await User.findOne({ _id: user._id });
+  let user1 = await User.findOne({ _id: user._id, isDeleted: false });
   if (!user1) throw msg.userNotFound;
   return {
     msg: msg.success,
@@ -223,8 +224,8 @@ const getProfile = async (user) => {
 };
 
 const deleteProfile = async (user) => {
-  let user = await User.findOneAndUpdate(
-    { _id: user._id },
+  let user1 = await User.findOneAndUpdate(
+    { _id: user._id, isDeleted: false },
     { $set: { isDeleted: true } },
     { new: true }
   );
@@ -234,11 +235,11 @@ const deleteProfile = async (user) => {
 };
 
 const deactivateProfile = async (user) => {
-  let user = await User.findOneAndUpdate(
-    { _id: user._id },
-    { $set: { isDeactivated: true } },
-    { new: true }
-  );
+  let user1 = await User.findOne({ _id: user._id, isDeleted: false });
+  if (!user1) throw msg.userNotFound;
+  if (user1.isDeactivated == true) user1.isDeactivated = false;
+  else user1.isDeactivated = true;
+  await user1.save();
   return {
     msg: msg.success,
   };
