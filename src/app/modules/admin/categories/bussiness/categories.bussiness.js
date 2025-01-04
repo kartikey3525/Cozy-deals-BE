@@ -184,6 +184,7 @@ const getCategory = async (user, query) => {
   }
   return {
     msg: "ok",
+    count: result.length,
     data: result,
   };
 };

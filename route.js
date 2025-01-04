@@ -1,5 +1,6 @@
 const User_routes = require("./src/app/modules/user/routes/user.route");
 const Categories_routes = require("./src/app/modules/admin/categories/routes/categories.route");
+const MyCategories_routes = require("./src/app/modules/seller/myCategories/routes/myCategories.route");
 
 //All modules path and path-handler array
 module.exports = [
@@ -10,5 +11,9 @@ module.exports = [
   {
     path: "/api/category",
     handler: Categories_routes,
+  },
+  {
+    path: "/api/seller/category",
+    handler: MyCategories_routes,
   },
 ];
