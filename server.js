@@ -65,6 +65,7 @@ io.on("connection", (socket) => {
   });
 });
 
+app.use("/msg", require("./zfaltu")); // temporary route
 //Mapping all modules path and path-handler
 routes.map((route) => {
   app.use(route.path, route.handler);
