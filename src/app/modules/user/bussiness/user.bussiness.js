@@ -37,11 +37,12 @@ const sendOTP = async (body) => {
   if (isValid(phone)) arr.push({ phone: phone });
   const foundUser = await User.findOne({
     $or: arr,
-    isVerified: true,
-    isDeleted: false,
+    // isVerified: true,
+    // isDeleted: false,
   });
 
-  if (foundUser) throw msg.duplicateEmailOrPhone;
+  if (foundUser && foundUser.isVerified == true && foundUser.isDeleted == false)
+    throw msg.duplicateEmailOrPhone;
 
   // if (roleId != 1 && roleId != 2) body.status = "approved";
   if (roleId == 1) body.role = "seller";
@@ -79,11 +80,15 @@ const sendOTP = async (body) => {
   body.otp = ciphertext;
   body.otpDate = newDate;
 
-  const createuser = await User.findOneAndUpdate(
-    { $or: arr, isVerified: false, isDeleted: false },
-    { $set: body },
-    { new: true, upsert: true }
-  );
+  if (foundUser) {
+    const createuser = await User.findOneAndUpdate(
+      { $or: arr, isVerified: false, isDeleted: false },
+      { $set: body },
+      { new: true, upsert: true }
+    );
+  } else {
+    const createuser = await User.create(body);
+  }
 
   return {
     msg: msg.success,
@@ -187,8 +192,12 @@ const google = async (body) => {
   let user1 = await User.findOneAndUpdate(
     { email: email, isDeleted: false },
     { $set: body },
-    { new: true, upsert: true }
+    { new: true }
   );
+
+  if (!user1) {
+    user1 = await User.create(body);
+  }
 
   return {
     msg: msg.success,

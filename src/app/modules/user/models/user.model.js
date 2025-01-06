@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema(
   {
+    id: { type: String, trim: true },
+    referralCode: { type: String, trim: true }, // id 
     name: { type: String, trim: true, default: "name" },
     email: {
       type: String,
@@ -108,6 +110,76 @@ const UserSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+UserSchema.pre("save", async function (next) {
+  const user = this;
+console.log("============id")
+  if (user.roleId === 0 && !user.id) {
+    try {
+      const lastStudent = await mongoose
+        .model("User")
+        .findOne({ roleId: 0 })
+        .sort({ createdAt: -1 });
+
+      let newId = "BU0001";
+
+      if (lastStudent && lastStudent.id) {
+        const lastIdNum = parseInt(lastStudent.id.replace("BU", ""));
+        const nextIdNum = lastIdNum + 1;
+
+        newId = `BU${nextIdNum.toString().padStart(4, "0")}`;
+      }
+
+      user.id = newId;
+      next();
+    } catch (err) {
+      next(err);
+    }
+  } else if (user.roleId === 1 && !user.id) {
+    try {
+      const lastStudent = await mongoose
+        .model("User")
+        .findOne({ roleId: 1 })
+        .sort({ createdAt: -1 });
+
+      let newId = "SE0001";
+
+      if (lastStudent && lastStudent.id) {
+        const lastIdNum = parseInt(lastStudent.id.replace("SE", ""));
+        const nextIdNum = lastIdNum + 1;
+
+        newId = `SE${nextIdNum.toString().padStart(4, "0")}`;
+      }
+
+      user.id = newId;
+      next();
+    } catch (err) {
+      next(err);
+    }
+  } else if (user.roleId === 2 && !user.id) {
+    try {
+      const lastStudent = await mongoose
+        .model("User")
+        .findOne({ roleId: 2 })
+        .sort({ createdAt: -1 });
+
+      let newId = "AD0001";
+
+      if (lastStudent && lastStudent.id) {
+        const lastIdNum = parseInt(lastStudent.id.replace("AD", ""));
+        const nextIdNum = lastIdNum + 1;
+
+        newId = `AD${nextIdNum.toString().padStart(4, "0")}`;
+      }
+
+      user.id = newId;
+      next();
+    } catch (err) {
+      next(err);
+    }
+  } else {
+    next();
+  }
+});
+
 const User = mongoose.model("User", UserSchema);
 module.exports = { User };
-
