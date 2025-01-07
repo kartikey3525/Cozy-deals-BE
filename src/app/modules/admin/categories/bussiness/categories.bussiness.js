@@ -14,7 +14,7 @@ const createCategory = async (user, body) => {
     let categoreCount = await Category.countDocuments();
     body.index = categoreCount + 1;
     const create = await Category.create(body);
-  } else if (index.length === 1) {
+  } else if (index.split(".").length === 1) {
     const check = await Category.findOne({ index: index });
     if (!check) throw "category not found";
     let len = 1;
@@ -36,7 +36,7 @@ const createCategory = async (user, body) => {
       },
       { new: true }
     );
-  } else if (index.length > 1) {
+  } else if (index.split(".").length > 1) {
     const addNestedExam = (categoryArray, indexArr, depth, name, image) => {
       const currentIndex = indexArr[depth];
       const found = categoryArray.find(
@@ -88,14 +88,14 @@ const updateCategory = async (user, body) => {
   if (isValid(name)) data.name = name;
   if (isValid(image)) data.image = image;
 
-  if (index.length === 1) {
+  if (index.split(".").length === 1) {
     let categories = await Category.findOneAndUpdate(
       { index: index },
       { $set: data },
       { new: true }
     );
     if (!categories) throw "category not found";
-  } else if (index.length > 1) {
+  } else if (index.split(".").length > 1) {
     const addNestedExam = (categoryArray, indexArr, depth) => {
       const currentIndex = indexArr[depth];
       const found = categoryArray.find(
