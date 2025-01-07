@@ -29,8 +29,14 @@ const sendOTP = async (body) => {
     throw "Password must be at least 6 characters long, include one letter, one number, and one special character.";
   }
 
-  if (!validator.isMobilePhone(phone) && !validator.isEmail(email))
-    throw msg.invalidPhone;
+  if (!isValid(phone) && !isValid(email)) throw msg.invalidPhone;
+
+  if (isValid(email)) {
+    if (!validator.isEmail(email)) throw msg.invalidEmail;
+  }
+  if (isValid(phone)) {
+    if (!validator.isMobilePhone(phone)) throw msg.invalidPhone;
+  }
 
   let arr = [];
   if (isValid(email)) arr.push({ email: email });

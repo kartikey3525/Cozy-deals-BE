@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const UserSchema = new mongoose.Schema(
   {
     id: { type: String, trim: true },
-    referralCode: { type: String, trim: true }, // id 
+    referralCode: { type: String, trim: true }, // id
     name: { type: String, trim: true, default: "name" },
     email: {
       type: String,
@@ -99,6 +99,18 @@ const UserSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    pushNotification: {
+      type: Boolean,
+      default: false,
+    },
+    smsNotification: {
+      type: Boolean,
+      default: false,
+    },
+    emailNotification: {
+      type: Boolean,
+      default: false,
+    },
     contactNumber: { type: String, trim: true },
     contactEmail: { type: String, trim: true },
     description: { type: String, trim: true },
@@ -112,7 +124,7 @@ const UserSchema = new mongoose.Schema(
 
 UserSchema.pre("save", async function (next) {
   const user = this;
-console.log("============id")
+  console.log("============id");
   if (user.roleId === 0 && !user.id) {
     try {
       const lastStudent = await mongoose
