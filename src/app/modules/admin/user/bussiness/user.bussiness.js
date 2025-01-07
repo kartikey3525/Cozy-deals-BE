@@ -40,4 +40,29 @@ const getUserById = async (user, query) => {
   };
 };
 
-module.exports = { allUsers, getUserById };
+const editProfile = async (user, query, body) => {
+  Object.keys(body).forEach((key) => {
+    if (!isValid(body[key])) delete body[key];
+  });
+
+  if (!isValid(query.id)) throw "Invalid user id";
+  if (isValid(body.email) || isValid(body.phone)) {
+    let existingUser = await User.findOne({
+      $or: [{ email: body.email }, { phone: body.phone }],
+      _id: { $ne: query.id },
+      isDeleted: false,
+    });
+    if (existingUser) throw "email or phone already";
+  }
+  let user1 = await User.findOneAndUpdate(
+    { _id: query.id, isDeleted: false },
+    { $set: body },
+    { new: true }
+  );
+
+  return {
+    msg: msg.success,
+  };
+};
+
+module.exports = { allUsers, getUserById, editProfile };

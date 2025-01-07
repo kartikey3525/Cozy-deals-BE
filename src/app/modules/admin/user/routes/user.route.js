@@ -7,6 +7,7 @@ const {
   getUserById,
   deleteProfile,
   deactivateProfile,
+  editProfile,
 } = require("../controllers/user.controller");
 
 router.get("/allUsers", adminAuthenticate, wrapAsync(allUsers));
@@ -17,5 +18,6 @@ router.delete(
   adminAuthenticate,
   wrapAsync(deactivateProfile)
 );
+router.put("/editProfile", adminAuthenticate, wrapAsync(editProfile));
 
 module.exports = router;

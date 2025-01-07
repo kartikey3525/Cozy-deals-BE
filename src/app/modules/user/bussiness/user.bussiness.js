@@ -212,6 +212,14 @@ const updateProfile = async (user, body) => {
   Object.keys(body).forEach((key) => {
     if (!isValid(body[key])) delete body[key];
   });
+  if (isValid(body.email) || isValid(body.phone)) {
+    let existingUser = await User.findOne({
+      $or: [{ email: body.email }, { phone: body.phone }],
+      _id: { $ne: user._id },
+      isDeleted: false,
+    });
+    if (existingUser) throw "email or phone already";
+  }
   let user1 = await User.findOneAndUpdate(
     { _id: user._id, isDeleted: false },
     { $set: body },
