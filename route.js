@@ -3,6 +3,7 @@ const Categories_routes = require("./src/app/modules/admin/categories/routes/cat
 const MyCategories_routes = require("./src/app/modules/seller/myCategories/routes/myCategories.route");
 const requirementPost_routes = require("./src/app/modules/buyer/requirementPost/routes/requirementPost.route");
 const Admin_User_routes = require("./src/app/modules/admin/user/routes/user.route");
+const Post_routes = require("./src/app/modules/seller/post/routes/post.route");
 
 //All modules path and path-handler array
 module.exports = [
@@ -25,5 +26,9 @@ module.exports = [
   {
     path: "/api/admin/user",
     handler: Admin_User_routes,
+  },
+  {
+    path: "/api/post",
+    handler: Post_routes,
   },
 ];
