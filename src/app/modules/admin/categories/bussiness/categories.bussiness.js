@@ -125,10 +125,12 @@ const updateCategory = async (user, body) => {
 };
 
 const getCategory = async (user, query) => {
-  const { index } = query;
+  const { index, key } = query;
   let result = [];
   if (!isValid(index)) {
-    const categories = await Category.find();
+    let filter = {};
+    if (isValid(key)) filter.name = new RegExp(query.key, "i");
+    const categories = await Category.find(filter);
     result = categories.map((category) => {
       const categoryObject = {
         ...category.toObject(),
@@ -138,7 +140,7 @@ const getCategory = async (user, query) => {
       delete categoryObject.subCategories; // Remove the 'exam' property
       return categoryObject;
     });
-  } else if (index.length === 1) {
+  } else if (index.split(".").length === 1) {
     let categories = await Category.findOne({ index: index });
     if (!categories) throw "category not found";
     categories = categories.subCategories;
@@ -151,7 +153,7 @@ const getCategory = async (user, query) => {
       delete categoryObject.subCategories; // Remove the 'subCategories' property
       return categoryObject;
     });
-  } else if (index.length > 1) {
+  } else if (index.split(".").length > 1) {
     const addNestedExam = (categoryArray, indexArr, depth) => {
       const currentIndex = indexArr[depth];
       const found = categoryArray.find(
@@ -193,13 +195,13 @@ const deleteCategory = async (user, query) => {
   const { index } = query;
   if (!isValid(index)) throw "index is required";
 
-  if (index.length === 1) {
+  if (index.split(".").length === 1) {
     let categories = await Category.findOne({ index: index });
     if (!categories) throw "category not found";
     if (categories.subCategories.length > 0)
       throw "Unable to delete: Remove subcategories first.";
     await Category.deleteOne({ index: index });
-  } else if (index.length > 1) {
+  } else if (index.split(".").length > 1) {
     const addNestedExam = (categoryArray, indexArr, depth) => {
       const currentIndex = indexArr[depth];
       const found = categoryArray.find(
