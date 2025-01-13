@@ -1,12 +1,9 @@
 const { User } = require("../../user/models/user.model");
 const { ChatApp } = require("../models/chatApp.model");
 const { ChatContact } = require("../models/contact.model");
+const { isValid } = require("../../../middleware/validator.middleware");
+const { msg } = require("../../../../config/message");
 const mongoose = require("mongoose");
-
-// Store mapping between user tokens and socket IDs
-const connectedUser = new Map();
-const viewSingleChat = new Map();
-const viewSingleChatWith = new Map();
 
 // =======================
 // Event handler for connecting sockets
@@ -19,6 +16,32 @@ const connect = async (io, socket) => {
       { new: true }
     );
     console.log("User connected", socket.id, "socket.id");
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+// =======================
+// Event handler for user list
+const userList = async (io, socket, data) => {
+  // data = {key: "search key"} optional
+  try {
+    let filter = {
+      isDeleted: false,
+      isVerified: true,
+      isDeactivated: false,
+      _id: { $ne: socket.user._id },
+    };
+    if (isValid(data.key)) filter.$or = [{ name: new RegExp(data.key, "i") }];
+    const allUser = await User.find(filter).select(
+      "name profile roleId role isAdminVerified lastSeen isOnline"
+    );
+
+    socket.emit("userList", {
+      msg: msg.success,
+      count: allUser.length,
+      result: allUser,
+    });
   } catch (error) {
     console.log(error.message);
   }
@@ -1501,6 +1524,7 @@ const isTyping = async (io, socket, data) => {
 module.exports = {
   connect,
   disconnect,
+  userList,
 };
 
 // const audioCallq = async (io, socket, data) => {
