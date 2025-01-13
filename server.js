@@ -6,8 +6,8 @@ const { env } = require("./src/environment/environment");
 const routes = require("./route");
 const mongoose = require("./src/app/db/mongoose");
 const {
-  socketConnections,
-} = require("./src/app/modules/chatApp/chat/chat.route");
+  socketchatfunction,
+} = require("./src/app/modules/chatApp/business/socket");
 const port = process.env.PORT || 3000;
 
 const session = require("express-session");
@@ -55,7 +55,7 @@ const socket = require("socket.io");
 let io = socket(server);
 io = io.of("/chat");
 
-socketConnections(io);
+socketchatfunction(io);
 
 // Socket connection event
 io.on("connection", (socket) => {
