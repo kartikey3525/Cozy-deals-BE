@@ -1,14 +1,44 @@
 const { User } = require("../../user/models/user.model");
-const {
-  ChatApp,
-} = require("../models/chatApp.model");
-const { ChatContact } = require("../models/contact");
+const { ChatApp } = require("../models/chatApp.model");
+const { ChatContact } = require("../models/contact.model");
 const mongoose = require("mongoose");
 
 // Store mapping between user tokens and socket IDs
 const connectedUser = new Map();
 const viewSingleChat = new Map();
 const viewSingleChatWith = new Map();
+
+// =======================
+// Event handler for connecting sockets
+const connect = async (io, socket) => {
+  try {
+    // Update online status of connected user
+    const updateOnlineStatus = await User.findByIdAndUpdate(
+      socket.user._id,
+      { $set: { isOnline: true, socketId: socket.id } },
+      { new: true }
+    );
+    console.log("User connected", socket.id, "socket.id");
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+// =======================
+// Event handler for disconnecting sockets
+const disconnect = async (io, socket) => {
+  try {
+    // Update online status of disconnected user
+    const updateOnlineStatus = await User.findByIdAndUpdate(
+      socket.user._id,
+      { $set: { isOnline: false, lastSeen: new Date() } },
+      { new: true }
+    );
+    console.log("User disconnected", socket.id, "socket.id");
+  } catch (error) {
+    console.log(error.message);
+  }
+};
 
 // ========================
 // Event handler for sending chat messages
@@ -360,25 +390,6 @@ const viewSingleChatFn = async (io, socket, data) => {
         }
       }
     }
-  } catch (error) {
-    console.log(error.message);
-  }
-};
-
-// =======================
-// Event handler for disconnecting sockets
-const disconnect = async (io, socket) => {
-  try {
-    // Update online status of disconnected user
-    const updateOnlineStatus = await ChatContact.updateOne(
-      { _id: socket.chatData._id },
-      { isOnline: false, lastSeen: new Date() },
-      { new: true }
-    );
-    console.log("User disconnected", socket.id, "socket.id");
-
-    // Remove user from connectedUser when they disconnect
-    connectedUser.delete(socket.chatData.id);
   } catch (error) {
     console.log(error.message);
   }
@@ -1488,16 +1499,9 @@ const isTyping = async (io, socket, data) => {
 };
 
 module.exports = {
-    // viewSingleChat,
-    // viewGroupChat,
-    // sendMessage,
-    // deleteMessage,
-    // isTyping,
-    // audioCallq,
-    // pickupAudioCallw,
-    // rejectAudioCallw,
-    // hangupAudioCallw,
-}
+  connect,
+  disconnect,
+};
 
 // const audioCallq = async (io, socket, data) => {
 //     try {

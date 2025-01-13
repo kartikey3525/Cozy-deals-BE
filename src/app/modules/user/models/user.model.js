@@ -71,6 +71,10 @@ const UserSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     }, // Indicates if the user is currently online
+    socketId: {
+      type: String,
+      trim: true,
+    }, // Indicates if the user is currently online
     isAcceptTermConditions: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
     isDeactivated: { type: Boolean, default: false },

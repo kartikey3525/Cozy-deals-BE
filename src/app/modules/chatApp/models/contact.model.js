@@ -18,6 +18,18 @@ let participantSchema = new mongoose.Schema({
   },
 });
 
+let blockSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Types.ObjectId,
+    ref: "User",
+    trim: true,
+  },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
 const contactSchema = new mongoose.Schema(
   {
     chatType: {
@@ -36,6 +48,11 @@ const contactSchema = new mongoose.Schema(
       ref: "User",
       trim: true,
     },
+    isBlocked: {
+      type: Boolean,
+      default: false,
+    },
+    blockBy: [blockSchema],
     participants: [participantSchema],
     groupName: {
       type: String,

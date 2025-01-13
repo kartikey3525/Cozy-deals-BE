@@ -1,5 +1,5 @@
 const { AuthSocket } = require("../../../middleware/authSocket.middleware");
-const mongoose = require("mongoose");
+const { connect, disconnect } = require("./socketFunction.business");
 
 // Define the function to handle chat socket connections
 function socketchatfunction(io) {
@@ -16,11 +16,18 @@ function socketchatfunction(io) {
     // Event handler for new socket connections
     io.on("connection", async (socket) => {
       try {
-        console.log("A user connected", socket.id, "socket.id");
+        console.log("A user connected", socket.id, "socket.id", socket.user);
+
+        // handler for connecting sockets
+        await connect(io, socket);
 
         // Event handler for disconnecting sockets
         socket.on("disconnect", async () => {
-          await disconnect(io, socket);
+          try {
+            await disconnect(io, socket);
+          } catch (error) {
+            console.error("Socket disconnection error:", error.message);
+          }
         });
       } catch (error) {
         console.error("Error in socket connection:", error.message);

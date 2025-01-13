@@ -7,7 +7,7 @@ const routes = require("./route");
 const mongoose = require("./src/app/db/mongoose");
 const {
   socketchatfunction,
-} = require("./src/app/modules/chatApp/business/socket");
+} = require("./src/app/modules/chatApp/business/socket.business");
 const port = process.env.PORT || 3000;
 
 const session = require("express-session");
@@ -57,13 +57,13 @@ io = io.of("/chat");
 
 socketchatfunction(io);
 
-// Socket connection event
-io.on("connection", (socket) => {
-  console.log("made socket connection", socket.id);
-  socket.on("disconnect", () => {
-    console.log("user disconnected");
-  });
-});
+// // Socket connection event
+// io.on("connection", (socket) => {
+//   console.log("made socket connection", socket.id);
+//   socket.on("disconnect", () => {
+//     console.log("user disconnected");
+//   });
+// });
 
 app.use("/msg", require("./zfaltu")); // temporary route
 //Mapping all modules path and path-handler
