@@ -24,6 +24,10 @@ let deleteSchema = new mongoose.Schema({
     ref: "User",
     trim: true,
   },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const messageData = new mongoose.Schema({

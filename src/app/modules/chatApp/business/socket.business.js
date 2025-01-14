@@ -6,6 +6,8 @@ const {
   openChat,
   createChat,
   sendMsg,
+  deleteMsg,
+  clearChat,
 } = require("./socketFunction.business");
 
 // Define the function to handle chat socket connections
@@ -67,6 +69,28 @@ function socketchatfunction(io) {
           // data = {"chatId": "678603c9676b7bd9de28d6d5", "msg": "Hello, how are you?", "msgType": "text", "thumbnail": ""}
           try {
             await sendMsg(io, socket, data);
+          } catch (error) {
+            console.error("Socket disconnection error:", error.message);
+            socket.emit("error", { msg: error.message });
+          }
+        });
+
+        // Event handler for delete msg
+        socket.on("deleteMsg", async (data) => {
+          // data = {"chatId": "678603c9676b7bd9de28d6d5", "msgId": "678603c9676b7bd9de28d6d5"}
+          try {
+            await deleteMsg(io, socket, data);
+          } catch (error) {
+            console.error("Socket disconnection error:", error.message);
+            socket.emit("error", { msg: error.message });
+          }
+        });
+
+        // Event handler for clear chat messages
+        socket.on("clearChat", async (data) => {
+          // data = {"chatId": "678603c9676b7bd9de28d6d5"}
+          try {
+            await clearChat(io, socket, data);
           } catch (error) {
             console.error("Socket disconnection error:", error.message);
             socket.emit("error", { msg: error.message });

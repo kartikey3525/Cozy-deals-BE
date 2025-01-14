@@ -154,6 +154,58 @@ const sendMsg = async (io, socket, data) => {
 };
 
 // =======================
+// Event handler for delete msg
+const deleteMsg = async (io, socket, data) => {
+  // data = {"chatId": "678603c9676b7bd9de28d6d5", "msgId": "678603c9676b7bd9de28d6d5"}
+  try {
+    if (!isValid(data.chatId) || !isValid(data.msgId)) {
+      return socket.emit("error", {
+        msg: "chatId and msgId is required",
+      });
+    }
+    const chatmsg = await ChatApp.updateOne(
+      {
+        chatId: data.chatId,
+        "message._id": data.msgId,
+      },
+      {
+        $push: { "message.$.deleteBy": { userId: socket.user._id } },
+      },
+      { new: true }
+    );
+  } catch (error) {
+    console.log(error.message);
+    socket.emit("error", { msg: error.message });
+  }
+};
+
+// =======================
+// Event handler for clear chat messages
+const clearChat = async (io, socket, data) => {
+  // data = {"chatId": "678603c9676b7bd9de28d6d5"}
+  try {
+    if (!isValid(data.chatId)) {
+      return socket.emit("error", {
+        msg: "chatId is required",
+      });
+    }
+    const chatmsg = await ChatApp.updateOne(
+      {
+        chatId: data.chatId,
+      },
+      {
+        $push: { "message.$[].deleteBy": { userId: socket.user._id } },
+        // Push into deleteBy for each message object
+      },
+      { new: true }
+    );
+  } catch (error) {
+    console.log(error.message);
+    socket.emit("error", { msg: error.message });
+  }
+};
+
+// =======================
 // Event handler for disconnecting sockets
 const disconnect = async (io, socket) => {
   try {
@@ -204,4 +256,6 @@ module.exports = {
   openChat,
   createChat,
   sendMsg,
+  deleteMsg,
+  clearChat,
 };
