@@ -41,7 +41,7 @@ const userList = async (io, socket, data) => {
     socket.emit("userList", {
       msg: msg.success,
       count: allUser.length,
-      result: allUser,
+      data: allUser,
     });
   } catch (error) {
     console.log(error.message);
@@ -101,7 +101,7 @@ const openChat = async (io, socket, data) => {
 
     socket.emit("userList", {
       msg: msg.success,
-      result: chatmsg,
+      data: chatmsg,
     });
   } catch (error) {
     console.log(error.message);
