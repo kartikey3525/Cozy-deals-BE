@@ -5,6 +5,7 @@ const {
   userList,
   openChat,
   createChat,
+  sendMsg,
 } = require("./socketFunction.business");
 
 // Define the function to handle chat socket connections
@@ -55,6 +56,17 @@ function socketchatfunction(io) {
           // data = {id: "6777999e3153e4016c5eca88"}
           try {
             await openChat(io, socket, data);
+          } catch (error) {
+            console.error("Socket disconnection error:", error.message);
+            socket.emit("error", { msg: error.message });
+          }
+        });
+
+        // Event handler for open chat
+        socket.on("sendMsg", async (data) => {
+          // data = {"chatId": "678603c9676b7bd9de28d6d5", "msg": "Hello, how are you?", "msgType": "text", "thumbnail": ""}
+          try {
+            await sendMsg(io, socket, data);
           } catch (error) {
             console.error("Socket disconnection error:", error.message);
             socket.emit("error", { msg: error.message });
