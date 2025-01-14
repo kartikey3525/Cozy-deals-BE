@@ -18,6 +18,7 @@ const connect = async (io, socket) => {
     console.log("User connected", socket.id, "socket.id");
   } catch (error) {
     console.log(error.message);
+    socket.emit("error", { msg: error.message });
   }
 };
 
@@ -44,6 +45,67 @@ const userList = async (io, socket, data) => {
     });
   } catch (error) {
     console.log(error.message);
+    socket.emit("error", { msg: error.message });
+  }
+};
+
+// =======================
+// Event handler for create chat
+const createChat = async (io, socket, data) => {
+  // data = {userId: "6777999e3153e4016c5eca88"}
+  try {
+    // Check if userId is provided in the data
+    if (!isValid(data.userId)) {
+      return socket.emit("error", {
+        msg: "UserId is required",
+      });
+    }
+
+    let chatmsg = await ChatContact.findOne({
+      $or: [
+        { user1: socket.user._id, user2: data.userId },
+        { user1: data.userId, user2: socket.user._id },
+      ],
+    });
+
+    if (!chatmsg) {
+      chatmsg = await ChatContact.create({
+        user1: socket.user._id,
+        user2: data.userId,
+      });
+      let msg1 = await ChatApp.create({ chatId: chatmsg._id });
+    }
+
+    socket.emit("openChat", {
+      msg: msg.success,
+      data: chatmsg,
+    });
+  } catch (error) {
+    console.log(error.message);
+    socket.emit("error", { msg: error.message });
+  }
+};
+
+// =======================
+// Event handler for open chat
+const openChat = async (io, socket, data) => {
+  // data = {id: "6777999e3153e4016c5eca88"}
+  try {
+    // Check if id is provided in the data
+    if (!isValid(data.id)) {
+      return socket.emit("error", {
+        msg: "id is required",
+      });
+    }
+    const chatmsg = await ChatContact.findById(data.id);
+
+    socket.emit("userList", {
+      msg: msg.success,
+      result: chatmsg,
+    });
+  } catch (error) {
+    console.log(error.message);
+    socket.emit("error", { msg: error.message });
   }
 };
 
@@ -60,6 +122,7 @@ const disconnect = async (io, socket) => {
     console.log("User disconnected", socket.id, "socket.id");
   } catch (error) {
     console.log(error.message);
+    socket.emit("error", { msg: error.message });
   }
 };
 
@@ -1525,6 +1588,8 @@ module.exports = {
   connect,
   disconnect,
   userList,
+  openChat,
+  createChat,
 };
 
 // const audioCallq = async (io, socket, data) => {

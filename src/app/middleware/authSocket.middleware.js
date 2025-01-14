@@ -11,6 +11,7 @@ const AuthSocket = (socket, next) => {
     });
   } catch (error) {
     return next(new Error("Authentication error"));
+    // socket.emit("error", { msg: error.message });
   }
 };
 
