@@ -76,11 +76,14 @@ const createChat = async (io, socket, data) => {
       let msg1 = await ChatApp.create({ chatId: chatmsg._id });
     }
 
+    let msgData = await msgDataFn(socket, chatmsg._id);
+
     socket.join(chatmsg._id.toString());
 
     socket.emit("openChat", {
       msg: msg.success,
       data: chatmsg,
+      msgData: msgData,
     });
   } catch (error) {
     console.log(error.message);
@@ -101,11 +104,14 @@ const openChat = async (io, socket, data) => {
     }
     const chatmsg = await ChatContact.findById(data.id);
 
+    let msgData = await msgDataFn(socket, chatmsg._id);
+
     socket.join(chatmsg._id.toString());
 
     socket.emit("openChat", {
       msg: msg.success,
       data: chatmsg,
+      msgData: msgData,
     });
   } catch (error) {
     console.log(error.message);
@@ -161,6 +167,25 @@ const disconnect = async (io, socket) => {
   } catch (error) {
     console.log(error.message);
     socket.emit("error", { msg: error.message });
+  }
+};
+
+// ======================= function =================
+
+const msgDataFn = async (socket, chatId) => {
+  try {
+    let data = await ChatApp.aggregate([
+      {
+        $match: { chatId: chatId },
+      },
+      {
+        $unwind: "$message",
+      },
+    ]);
+
+    return data;
+  } catch (error) {
+    return error.message;
   }
 };
 
