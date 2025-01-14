@@ -185,8 +185,10 @@ const msgDataFn = async (socket, chatId) => {
         $project: {
           chatId: 1,
           message: 1,
-        }
-      }
+          _id: 0,
+        },
+      },
+      { $replaceRoot: { newRoot: "$message" } },
     ]);
 
     return data;
