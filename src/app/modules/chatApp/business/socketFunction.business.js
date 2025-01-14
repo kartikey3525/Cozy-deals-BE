@@ -181,6 +181,12 @@ const msgDataFn = async (socket, chatId) => {
       {
         $unwind: "$message",
       },
+      {
+        $project: {
+          chatId: 1,
+          message: 1,
+        }
+      }
     ]);
 
     return data;
