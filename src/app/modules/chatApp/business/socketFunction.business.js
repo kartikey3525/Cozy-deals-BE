@@ -92,6 +92,24 @@ const createChat = async (io, socket, data) => {
 };
 
 // =======================
+// Event handler for view all chat list
+const chatList = async (io, socket, data) => {
+  try {
+    // const chatmsg = await ChatContact.findById(data.id);
+    // let msgData = await msgDataFn(socket, chatmsg._id);
+    // socket.join(chatmsg._id.toString());
+    // socket.emit("openChat", {
+    //   msg: msg.success,
+    //   data: chatmsg,
+    //   msgData: msgData,
+    // });
+  } catch (error) {
+    console.log(error.message);
+    socket.emit("error", { msg: error.message });
+  }
+};
+
+// =======================
 // Event handler for open chat
 const openChat = async (io, socket, data) => {
   // data = {id: "6777999e3153e4016c5eca88"}
@@ -261,4 +279,5 @@ module.exports = {
   sendMsg,
   deleteMsg,
   clearChat,
+  chatList,
 };
