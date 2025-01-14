@@ -167,9 +167,11 @@ const deleteMsg = async (io, socket, data) => {
       {
         chatId: data.chatId,
         "message._id": data.msgId,
+        "message.deleteBy.userId": { $ne: socket.user._id }, // Ensure userId is not already in deleteBy
       },
       {
-        $push: { "message.$.deleteBy": { userId: socket.user._id } },
+        $addToSet: { "message.$.deleteBy": { userId: socket.user._id } },
+        // Add only if it doesn't exist
       },
       { new: true }
     );
@@ -192,10 +194,11 @@ const clearChat = async (io, socket, data) => {
     const chatmsg = await ChatApp.updateOne(
       {
         chatId: data.chatId,
+        "message.deleteBy.userId": { $ne: socket.user._id }, // Ensure userId is not already in deleteBy
       },
       {
-        $push: { "message.$[].deleteBy": { userId: socket.user._id } },
-        // Push into deleteBy for each message object
+        $addToSet: { "message.$[].deleteBy": { userId: socket.user._id } },
+        // Add to deleteBy if userId does not already exist
       },
       { new: true }
     );

@@ -1,34 +1,40 @@
 const mongoose = require("mongoose");
 
-let readSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Types.ObjectId,
-    ref: "User",
-    trim: true,
+let readSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+      trim: true,
+    },
+    status: {
+      type: String,
+      trim: true,
+      enum: ["delivered", "read"],
+      default: "read",
+    },
+    date: {
+      type: Date,
+      default: Date.now,
+    },
   },
-  status: {
-    type: String,
-    trim: true,
-    enum: ["delivered", "read"],
-    default: "read",
-  },
-  date: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  { _id: false }
+);
 
-let deleteSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Types.ObjectId,
-    ref: "User",
-    trim: true,
+let deleteSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+      trim: true,
+    },
+    date: {
+      type: Date,
+      default: Date.now,
+    },
   },
-  date: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  { _id: false }
+);
 
 const messageData = new mongoose.Schema({
   senderId: {
