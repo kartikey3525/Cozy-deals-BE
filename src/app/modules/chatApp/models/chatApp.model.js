@@ -81,6 +81,7 @@ const MessageSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "Chatcontact",
       trim: true,
+      unique: true,
     },
     message: [messageData],
   },

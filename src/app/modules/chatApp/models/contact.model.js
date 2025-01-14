@@ -1,34 +1,40 @@
 const mongoose = require("mongoose");
 
-let participantSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Types.ObjectId,
-    ref: "User",
-    trim: true,
+let participantSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+      trim: true,
+    },
+    role: {
+      type: String,
+      trim: true,
+      enum: ["admin", "member"],
+      default: "member",
+    },
+    date: {
+      type: Date,
+      default: Date.now,
+    },
   },
-  role: {
-    type: String,
-    trim: true,
-    enum: ["admin", "member"],
-    default: "member",
-  },
-  date: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  { _id: false }
+);
 
-let blockSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Types.ObjectId,
-    ref: "User",
-    trim: true,
+let blockSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+      trim: true,
+    },
+    date: {
+      type: Date,
+      default: Date.now,
+    },
   },
-  date: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  { _id: false }
+);
 
 const contactSchema = new mongoose.Schema(
   {
