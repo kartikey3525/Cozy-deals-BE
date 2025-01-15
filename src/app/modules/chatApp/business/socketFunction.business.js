@@ -15,6 +15,11 @@ const connect = async (io, socket) => {
       { $set: { isOnline: true, socketId: socket.id } },
       { new: true }
     );
+
+    //   // List all connected socket IDs
+    // const connectedUsers = Array.from(io.sockets.keys());
+    // console.log("Connected users:", connectedUsers, "================================================");
+
     console.log("User connected", socket.id, "socket.id");
   } catch (error) {
     console.log(error.message);
