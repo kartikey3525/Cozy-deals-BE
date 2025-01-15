@@ -95,14 +95,65 @@ const createChat = async (io, socket, data) => {
 // Event handler for view all chat list
 const chatList = async (io, socket, data) => {
   try {
-    // const chatmsg = await ChatContact.findById(data.id);
-    // let msgData = await msgDataFn(socket, chatmsg._id);
-    // socket.join(chatmsg._id.toString());
-    // socket.emit("openChat", {
-    //   msg: msg.success,
-    //   data: chatmsg,
-    //   msgData: msgData,
-    // });
+    const list = await ChatContact.aggregate([
+      {
+        $match: {
+          $or: [
+            { user1: new mongoose.Types.ObjectId(socket.user._id) },
+            { user2: new mongoose.Types.ObjectId(socket.user._id) },
+          ],
+        },
+      },
+      {
+        $addFields: {
+          chatWithUser: {
+            $cond: {
+              if: {
+                $ne: ["$user1", new mongoose.Types.ObjectId(socket.user._id)],
+              }, // Check if user1 is not equal to socket.user._id
+              then: "$user1", // Assign user1
+              else: "$user2", // Otherwise, assign user2
+            },
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          let: { id: "$chatWithUser" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$_id", "$$id"] } } },
+            {
+              $project: {
+                name: 1,
+                profile: 1,
+                roleId: 1,
+                role: 1,
+                isAdminVerified: 1,
+                lastSeen: 1,
+                isOnline: 1,
+              },
+            },
+          ],
+          as: "chatWithUser",
+        },
+      },
+      {
+        $unwind: "$chatWithUser",
+      },
+      {
+        $project: {
+          chatWithUser: 1,
+          chatType: 1,
+          isBlocked: 1,
+        },
+      },
+    ]);
+    socket.emit("chatList", {
+      msg: msg.success,
+      count: list.length,
+      data: list,
+    });
   } catch (error) {
     console.log(error.message);
     socket.emit("error", { msg: error.message });
