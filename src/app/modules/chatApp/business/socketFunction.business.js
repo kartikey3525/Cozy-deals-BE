@@ -230,6 +230,13 @@ const sendMsg = async (io, socket, data) => {
       { chatId: data.chatId },
       { $push: { message: data } },
       { new: true }
+    ).populate("chatId", "user1 user2");
+
+    const clientsInRoom = Array.from(io.adapter.rooms.get(data.chatId) || []);
+    console.log(
+      "Users in room:",
+      clientsInRoom,
+      "==========================================="
     );
 
     io.to(data.chatId).emit("receiveMsg", {
@@ -360,6 +367,18 @@ const disconnect = async (io, socket) => {
 
 const msgDataFn = async (socket, chatId) => {
   try {
+    const chatmsg = await ChatApp.updateOne(
+      {
+        chatId: chatId,
+        "message.readBy.userId": { $ne: socket.user._id }, // Ensure userId is not already in readBy
+      },
+      {
+        $addToSet: { "message.$[].readBy": { userId: socket.user._id } },
+        // Add to readBy if userId does not already exist
+      },
+      { new: true }
+    );
+
     let data = await ChatApp.aggregate([
       {
         $match: { chatId: chatId },
