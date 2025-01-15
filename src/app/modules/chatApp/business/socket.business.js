@@ -9,6 +9,7 @@ const {
   deleteMsg,
   clearChat,
   chatList,
+  blockUnblock,
 } = require("./socketFunction.business");
 
 // Define the function to handle chat socket connections
@@ -102,6 +103,17 @@ function socketchatfunction(io) {
           // data = {"chatId": "678603c9676b7bd9de28d6d5"}
           try {
             await clearChat(io, socket, data);
+          } catch (error) {
+            console.error("Socket disconnection error:", error.message);
+            socket.emit("error", { msg: error.message });
+          }
+        });
+
+        // Event handler for block or unblock user
+        socket.on("blockUnblock", async (data) => {
+          // data = {"chatId": "678603c9676b7bd9de28d6d5", status: "unblock" // block, unblock}
+          try {
+            await blockUnblock(io, socket, data);
           } catch (error) {
             console.error("Socket disconnection error:", error.message);
             socket.emit("error", { msg: error.message });

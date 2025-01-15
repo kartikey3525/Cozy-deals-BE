@@ -58,6 +58,7 @@ const messageData = new mongoose.Schema({
       "link",
       "video",
       "pdf",
+      "otherText",
     ],
     default: "text",
     required: true,

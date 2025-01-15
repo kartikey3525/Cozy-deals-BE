@@ -283,6 +283,48 @@ const clearChat = async (io, socket, data) => {
 };
 
 // =======================
+// Event handler for block or unblock user
+const blockUnblock = async (io, socket, data) => {
+  // data = {"chatId": "678603c9676b7bd9de28d6d5", status: "unblock" // block, unblock}
+  try {
+    if (!isValid(data.chatId) || !isValid(data.status)) {
+      return socket.emit("error", {
+        msg: "chatId and status are required",
+      });
+    }
+    if (isValid(data.status) && data.status == "block") {
+      const block = await ChatContact.updateOne(
+        {
+          _id: data.chatId,
+          "blockBy.userId": { $ne: socket.user._id }, // Ensure userId is not already in blockBy
+        },
+        {
+          $addToSet: { blockBy: { userId: socket.user._id } },
+          // Add to blockBy if userId does not already exist
+          $set: { isBlocked: true }, // Set isBlocked to true
+        },
+        { new: true }
+      );
+    } else if (isValid(data.status) && data.status == "unblock") {
+      const block = await ChatContact.findByIdAndUpdate(
+        {
+          _id: data.chatId,
+        },
+        {
+          $pull: { blockBy: { userId: socket.user._id } },
+        },
+        { new: true }
+      );
+      if (block.blockBy.length == 0) block.isBlocked = false;
+      await block.save();
+    }
+  } catch (error) {
+    console.log(error.message);
+    socket.emit("error", { msg: error.message });
+  }
+};
+
+// =======================
 // Event handler for disconnecting sockets
 const disconnect = async (io, socket) => {
   try {
@@ -336,4 +378,5 @@ module.exports = {
   deleteMsg,
   clearChat,
   chatList,
+  blockUnblock,
 };
