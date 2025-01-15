@@ -82,7 +82,14 @@ const createChat = async (io, socket, data) => {
     }
 
     let msgData = await msgDataFn(socket, chatmsg._id);
-
+    // leaving all room, before joining any room
+    socket.rooms.forEach((roomId) => {
+      if (roomId !== socket.id) {
+        // Avoid leaving the default room with the socket's own ID
+        socket.leave(roomId);
+        console.log(`Socket ${socket.id} left room ${roomId}`);
+      }
+    });
     socket.join(chatmsg._id.toString());
 
     socket.emit("openChat", {
@@ -179,6 +186,14 @@ const openChat = async (io, socket, data) => {
     const chatmsg = await ChatContact.findById(data.id);
 
     let msgData = await msgDataFn(socket, chatmsg._id);
+    // leaving all room, before joining any room
+    socket.rooms.forEach((roomId) => {
+      if (roomId !== socket.id) {
+        // Avoid leaving the default room with the socket's own ID
+        socket.leave(roomId);
+        console.log(`Socket ${socket.id} left room ${roomId}`);
+      }
+    });
 
     socket.join(chatmsg._id.toString());
 
