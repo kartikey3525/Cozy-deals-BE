@@ -10,6 +10,7 @@ const {
   clearChat,
   chatList,
   blockUnblock,
+  isTyping,
 } = require("./socketFunction.business");
 
 // Define the function to handle chat socket connections
@@ -81,6 +82,17 @@ function socketchatfunction(io) {
           // data = {"chatId": "678603c9676b7bd9de28d6d5", "msg": "Hello, how are you?", "msgType": "text", "thumbnail": ""}
           try {
             await sendMsg(io, socket, data);
+          } catch (error) {
+            console.error("Socket disconnection error:", error.message);
+            socket.emit("error", { msg: error.message });
+          }
+        });
+
+        // Event handler for typing
+        socket.on("isTyping", async (data) => {
+          // data = {"chatId": "678603c9676b7bd9de28d6d5", isTyping: true // true, false}
+          try {
+            await isTyping(io, socket, data);
           } catch (error) {
             console.error("Socket disconnection error:", error.message);
             socket.emit("error", { msg: error.message });

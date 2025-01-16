@@ -278,6 +278,30 @@ const sendMsg = async (io, socket, data) => {
 };
 
 // =======================
+// Event handler for typing
+const isTyping = async (io, socket, data) => {
+  // data = {"chatId": "678603c9676b7bd9de28d6d5", isTyping: true // true, false}
+  try {
+    // Check if id is provided in the data
+    if (!isValid(data.chatId) || !isValid(data.isTyping)) {
+      return socket.emit("error", {
+        msg: "chatId and typing status are required",
+      });
+    }
+
+    data.userId = socket.user._id;
+
+    io.to(data.chatId).emit("isTyping", {
+      msg: msg.success,
+      data: data,
+    });
+  } catch (error) {
+    console.log(error.message);
+    socket.emit("error", { msg: error.message });
+  }
+};
+
+// =======================
 // Event handler for delete msg
 const deleteMsg = async (io, socket, data) => {
   // data = {"chatId": "678603c9676b7bd9de28d6d5", "msgId": "678603c9676b7bd9de28d6d5"}
@@ -441,4 +465,5 @@ module.exports = {
   clearChat,
   chatList,
   blockUnblock,
+  isTyping,
 };
