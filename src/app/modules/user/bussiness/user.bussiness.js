@@ -12,12 +12,11 @@ let validator = require("validator");
 const sendOTP = async (body) => {
   let {
     name,
-    phone,
     countryCode = 91,
-    email,
     password,
     // userName,
     roleId = 0,
+    emailPhone,
     isAcceptTermConditions,
   } = body;
 
@@ -29,71 +28,66 @@ const sendOTP = async (body) => {
     throw "Password must be at least 6 characters long, include one letter, one number, and one special character.";
   }
 
-  if (!isValid(phone) && !isValid(email)) throw msg.invalidPhone;
+  if (!isValid(emailPhone)) throw msg.invalidPhone;
 
-  if (isValid(email)) {
-    if (!validator.isEmail(email)) throw msg.invalidEmail;
-  }
-  if (isValid(phone)) {
-    if (!validator.isMobilePhone(phone)) throw msg.invalidPhone;
-  }
+  if (validator.isEmail(emailPhone)) body.email = emailPhone;
+  else body.phone = emailPhone;
 
-  let arr = [];
-  if (isValid(email)) arr.push({ email: email });
-  if (isValid(phone)) arr.push({ phone: phone });
+  let arr = [{ email: emailPhone }, { phone: emailPhone }];
   const foundUser = await User.findOne({
     $or: arr,
     // isVerified: true,
-    // isDeleted: false,
+    isDeleted: false,
   });
 
-  if (foundUser && foundUser.isVerified == true && foundUser.isDeleted == false)
-    throw msg.duplicateEmailOrPhone;
-
-  // if (roleId != 1 && roleId != 2) body.status = "approved";
-  if (roleId == 1) body.role = "seller";
-  // else if (roleId == 2) body.role = "admin";
-
   let OTP = Math.floor(1000 + Math.random() * 999).toString();
+
   let ciphertext = CryptoJS.AES.encrypt(
     OTP,
     process.env.crypto_secret_key
   ).toString();
-
-  body.password = CryptoJS.AES.encrypt(
-    password,
-    process.env.crypto_secret_key
-  ).toString();
-
-  if (isValid(email)) {
-    let abc = emailOtp(
-      email,
-      `Please enter this OTP ${OTP} . This code is valid for 10 minutes`,
-      OTP
-    );
-    console.log(abc, "===============");
-  } else if (isValid(phone)) {
-    let phoneNumber = `${countryCode}${phone}`;
-    let abc = sendSmsFromSpringedge(
-      phoneNumber,
-      `Please enter this OTP ${OTP} . This code is valid for 10 minutes`,
-      OTP
-    );
-    console.log(abc, "===============");
-  }
 
   let newDate = new Date();
   body.otp = ciphertext;
   body.otpDate = newDate;
 
   if (foundUser) {
-    const createuser = await User.findOneAndUpdate(
-      { $or: arr, isVerified: false, isDeleted: false },
-      { $set: body },
-      { new: true, upsert: true }
-    );
+    let decryptPassword = CryptoJS.AES.decrypt(
+      foundUser.password,
+      process.env.crypto_secret_key
+    ).toString(CryptoJS.enc.Utf8);
+
+    if (decryptPassword != password) throw msg.invalidPassword;
+    foundUser.otp = ciphertext;
+    foundUser.otpDate = newDate;
+    await foundUser.save();
   } else {
+    // if (roleId != 1 && roleId != 2) body.status = "approved";
+    if (roleId == 1) body.role = "seller";
+    // else if (roleId == 2) body.role = "admin";
+
+    body.password = CryptoJS.AES.encrypt(
+      password,
+      process.env.crypto_secret_key
+    ).toString();
     const createuser = await User.create(body);
+  }
+
+  if (isValid(body.email)) {
+    let abc = emailOtp(
+      body.email,
+      `Please enter this OTP ${OTP} . This code is valid for 10 minutes`,
+      OTP
+    );
+    console.log(abc, "===============");
+  } else if (isValid(body.phone)) {
+    let phoneNumber = `${countryCode}${body.phone}`;
+    let abc = sendSmsFromSpringedge(
+      phoneNumber,
+      `Please enter this OTP ${OTP} . This code is valid for 10 minutes`,
+      OTP
+    );
+    console.log(abc, "===============");
   }
 
   return {
@@ -127,7 +121,7 @@ const verifyOTP = async (body) => {
     process.env.crypto_secret_key
   );
   const originalText = bytes.toString(CryptoJS.enc.Utf8);
-  if (originalText == otp || originalText != otp) {
+  if (originalText == otp) {
     // when otp is work, then modify this line (|| originalText != otp ) remove this
     foundUser.isVerified = true;
     foundUser.fcmToken = fcmToken;
