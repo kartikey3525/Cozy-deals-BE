@@ -32,6 +32,10 @@ const UserSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    forgotPassword: {
+      type: String,
+      trim: true,
+    },
     otp: {
       type: String,
       trim: true,

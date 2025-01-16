@@ -22,7 +22,7 @@ const sendOTP = async (body) => {
 
   let check = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
 
-  if (isAcceptTermConditions !== true) throw "accept-term-conditions";
+  // if (isAcceptTermConditions !== true) throw "accept-term-conditions";
 
   if (!check.test(password)) {
     throw "Password must be at least 6 characters long, include one letter, one number, and one special character.";
@@ -51,13 +51,22 @@ const sendOTP = async (body) => {
   body.otp = ciphertext;
   body.otpDate = newDate;
 
-  if (foundUser) {
-    let decryptPassword = CryptoJS.AES.decrypt(
-      foundUser.password,
-      process.env.crypto_secret_key
-    ).toString(CryptoJS.enc.Utf8);
+  let cipherPassword = CryptoJS.AES.encrypt(
+    password,
+    process.env.crypto_secret_key
+  ).toString();
 
-    if (decryptPassword != password) throw msg.invalidPassword;
+  if (foundUser) {
+    if (isValid(body.forgot) && body.forgot == true) {
+      foundUser.forgotPassword = cipherPassword;
+    } else {
+      let decryptPassword = CryptoJS.AES.decrypt(
+        foundUser.password,
+        process.env.crypto_secret_key
+      ).toString(CryptoJS.enc.Utf8);
+
+      if (decryptPassword != password) throw msg.invalidPassword;
+    }
     foundUser.otp = ciphertext;
     foundUser.otpDate = newDate;
     await foundUser.save();
@@ -66,10 +75,7 @@ const sendOTP = async (body) => {
     if (roleId == 1) body.role = "seller";
     // else if (roleId == 2) body.role = "admin";
 
-    body.password = CryptoJS.AES.encrypt(
-      password,
-      process.env.crypto_secret_key
-    ).toString();
+    body.password = cipherPassword;
     const createuser = await User.create(body);
   }
 
@@ -123,6 +129,9 @@ const verifyOTP = async (body) => {
   const originalText = bytes.toString(CryptoJS.enc.Utf8);
   if (originalText == otp) {
     // when otp is work, then modify this line (|| originalText != otp ) remove this
+    if (isValid(body.forgot) && body.forgot == true) {
+      foundUser.forgotPassword = cipherPassword;
+    }
     foundUser.isVerified = true;
     foundUser.fcmToken = fcmToken;
     res = await foundUser.save();
