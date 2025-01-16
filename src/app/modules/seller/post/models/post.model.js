@@ -18,6 +18,16 @@ const postSchema = new mongoose.Schema(
     contactEmail: { type: String, trim: true },
     location: { type: String, trim: true },
     locationUrl: { type: String, trim: true },
+    latitude: {
+      // location latitude
+      type: String,
+      trim: true,
+    },
+    longitude: {
+      // location longitude
+      type: String,
+      trim: true,
+    },
     isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true }
