@@ -5,6 +5,7 @@ const requirementPost_routes = require("./src/app/modules/buyer/requirementPost/
 const Admin_User_routes = require("./src/app/modules/admin/user/routes/user.route");
 const Post_routes = require("./src/app/modules/seller/post/routes/post.route");
 const Buyer_Post_routes = require("./src/app/modules/buyer/post/routes/post.route");
+const Rating_routes = require("./src/app/modules/seller/rating/routes/rating.route");
 
 //All modules path and path-handler array
 module.exports = [
@@ -35,5 +36,9 @@ module.exports = [
   {
     path: "/api/buyer/post",
     handler: Buyer_Post_routes,
+  },
+  {
+    path: "/api/rate",
+    handler: Rating_routes,
   },
 ];
