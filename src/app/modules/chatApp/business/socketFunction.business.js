@@ -233,6 +233,34 @@ const sendMsg = async (io, socket, data) => {
     ).populate("chatId", "user1 user2");
 
     const clientsInRoom = Array.from(io.adapter.rooms.get(data.chatId) || []);
+    if (clientsInRoom.length > 1) {
+      let chatWithUsers;
+      if (chatmsg.chatId.user1.toString() == socket.user._id.toString()) {
+        chatWithUsers = chatmsg.chatId.user2;
+      } else {
+        chatWithUsers = chatmsg.chatId.user1;
+      }
+      let socketId1 = await User.findById(chatWithUsers).select("socketId");
+      for (let i = 0; i < clientsInRoom.length - 1; i++) {
+        if (clientsInRoom[i] == socketId1.socketId) {
+          data.readBy.push({
+            userId: socketId1._id,
+            status: "read",
+          });
+          const chatmsg11 = await ChatApp.updateOne(
+            {
+              chatId: data.chatId,
+              "message.readBy.userId": { $ne: socketId1._id }, // Ensure userId is not already in readBy
+            },
+            {
+              $addToSet: { "message.$[].readBy": { userId: socketId1._id } },
+              // Add to readBy if userId does not already exist
+            },
+            { new: true }
+          );
+        }
+      }
+    }
     console.log(
       "Users in room:",
       clientsInRoom,
