@@ -60,12 +60,14 @@ const sendOTP = async (body) => {
     if (isValid(body.forgot) && body.forgot == true) {
       foundUser.forgotPassword = cipherPassword;
     } else {
-      let decryptPassword = CryptoJS.AES.decrypt(
-        foundUser.password,
-        process.env.crypto_secret_key
-      ).toString(CryptoJS.enc.Utf8);
+      if (foundUser.isVerified === true) {
+        let decryptPassword = CryptoJS.AES.decrypt(
+          foundUser.password,
+          process.env.crypto_secret_key
+        ).toString(CryptoJS.enc.Utf8);
 
-      if (decryptPassword != password) throw msg.invalidPassword;
+        if (decryptPassword != password) throw msg.invalidPassword;
+      } else foundUser.password = cipherPassword;
     }
     foundUser.otp = ciphertext;
     foundUser.otpDate = newDate;
@@ -130,7 +132,7 @@ const verifyOTP = async (body) => {
   if (originalText == otp) {
     // when otp is work, then modify this line (|| originalText != otp ) remove this
     if (isValid(body.forgot) && body.forgot == true) {
-      foundUser.forgotPassword = cipherPassword;
+      foundUser.password = foundUser.forgotPassword;
     }
     foundUser.isVerified = true;
     foundUser.fcmToken = fcmToken;
