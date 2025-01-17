@@ -19,7 +19,7 @@ const {
 } = require("../controllers/myCategories.controller");
 
 //Category
-router.get("/getCategory", sellerAuthenticate, wrapAsync(getCategory));
+router.get("/getCategory", authenticate, wrapAsync(getCategory));
 
 //MyCategory
 router.post("/addCategory", sellerAuthenticate, wrapAsync(addCategory));

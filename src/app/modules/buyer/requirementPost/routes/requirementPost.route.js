@@ -1,7 +1,10 @@
 let express = require("express");
 let router = express.Router();
 const { wrapAsync } = require("../../../../helpers/router.helper");
-const { buyerAuthenticate } = require("../../../../middleware/jwt.middleware");
+const {
+  buyerAuthenticate,
+  authenticate,
+} = require("../../../../middleware/jwt.middleware");
 const multer = require("multer");
 const upload = multer({ dest: "public/" });
 
@@ -17,7 +20,7 @@ const {
 } = require("../controllers/requirementPost.controller");
 
 //Category
-router.get("/getCategory", buyerAuthenticate, wrapAsync(getCategory));
+router.get("/getCategory", authenticate, wrapAsync(getCategory));
 
 //requirements post
 router.post("/postRequirement", buyerAuthenticate, wrapAsync(postRequirement));

@@ -25,7 +25,8 @@ const recentPosts = async (user, query) => {
 
 const allPosts = async (user, query, body) => {
   let {
-    distance = 5,
+    startDistance = 0,
+    endDistance = 5,
     rating,
     topRated,
     key,
