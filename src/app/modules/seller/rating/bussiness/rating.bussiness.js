@@ -6,11 +6,7 @@ const rating = async (user, query, body) => {
   if (!isValid(query.postId)) throw "postId must be a valid";
   if (!isValid(body.rate) || body.rate < 1 || body.rate > 5)
     throw "rate must be between 1 and 5";
-  let check = await Rating.findOneAndUpdate(
-    { postId: query.postId },
-    {},
-    { upsert: true }
-  );
+
   const rate = await Rating.updateOne(
     { postId: query.postId, "rating.userId": { $ne: user._id } },
     { $addToSet: { rating: { userId: user._id, ...body } } },

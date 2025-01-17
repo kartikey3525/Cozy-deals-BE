@@ -1,10 +1,16 @@
 const { msg } = require("../../../../../config/message");
 const { isValid } = require("../../../../middleware/validator.middleware");
+const { Rating } = require("../../rating/models/rating.model");
 const { Post } = require("../models/post.model");
 
 const create = async (user, body) => {
   body.userId = user._id;
   const create = await Post.create(body);
+  let rating = await Rating.findOneAndUpdate(
+    { postId: create._id },
+    {},
+    { upsert: true }
+  );
   return {
     msg: msg.success,
   };
