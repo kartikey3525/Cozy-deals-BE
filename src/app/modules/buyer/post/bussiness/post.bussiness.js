@@ -25,14 +25,16 @@ const recentPosts = async (user, query) => {
 
 const allPosts = async (user, query, body) => {
   let {
-    startDistance = 0,
-    endDistance = 5,
+    startDistance,
+    endDistance,
     rating,
     topRated,
     key,
     categories,
     myPost = false,
     userId,
+    latitude,
+    longitude,
   } = body;
   let { page } = query;
   let filter = { isDeleted: false };
@@ -107,58 +109,69 @@ const allPosts = async (user, query, body) => {
     pipeline.push({ $match: { "rating.averageRating": { $gte: rating } } });
   }
 
-  let userData = await User.findById(user._id).select("longitude latitude");
+  // let userData = await User.findById(user._id).select("longitude latitude");
 
-  pipeline.push({
-    $addFields: {
-      distance: {
-        $let: {
-          vars: {
-            lat1: { $toDouble: "$latitude" },
-            lon1: { $toDouble: "$longitude" },
-            lat2: { $toDouble: userData.latitude },
-            lon2: { $toDouble: userData.longitude },
-            earthRadius: 6371, // Earth's radius in kilometers (valid variable name)
-          },
-          in: {
-            $multiply: [
-              "$$earthRadius",
-              {
-                $acos: {
-                  $add: [
-                    {
-                      $multiply: [
-                        { $sin: { $degreesToRadians: "$$lat1" } },
-                        { $sin: { $degreesToRadians: "$$lat2" } },
-                      ],
-                    },
-                    {
-                      $multiply: [
-                        { $cos: { $degreesToRadians: "$$lat1" } },
-                        { $cos: { $degreesToRadians: "$$lat2" } },
-                        {
-                          $cos: {
-                            $subtract: [
-                              { $degreesToRadians: "$$lon2" },
-                              { $degreesToRadians: "$$lon1" },
-                            ],
+  if (isValid(latitude) && isValid(longitude)) {
+    pipeline.push({
+      $addFields: {
+        distance: {
+          $let: {
+            vars: {
+              lat1: { $toDouble: "$latitude" },
+              lon1: { $toDouble: "$longitude" },
+              lat2: { $toDouble: latitude },
+              lon2: { $toDouble: longitude },
+              earthRadius: 6371, // Earth's radius in kilometers (valid variable name)
+            },
+            in: {
+              $multiply: [
+                "$$earthRadius",
+                {
+                  $acos: {
+                    $add: [
+                      {
+                        $multiply: [
+                          { $sin: { $degreesToRadians: "$$lat1" } },
+                          { $sin: { $degreesToRadians: "$$lat2" } },
+                        ],
+                      },
+                      {
+                        $multiply: [
+                          { $cos: { $degreesToRadians: "$$lat1" } },
+                          { $cos: { $degreesToRadians: "$$lat2" } },
+                          {
+                            $cos: {
+                              $subtract: [
+                                { $degreesToRadians: "$$lon2" },
+                                { $degreesToRadians: "$$lon1" },
+                              ],
+                            },
                           },
-                        },
-                      ],
-                    },
-                  ],
+                        ],
+                      },
+                    ],
+                  },
                 },
-              },
-            ],
+              ],
+            },
           },
         },
       },
-    },
-  });
+    });
 
-  pipeline.push({
-    $addFields: { distance: { $round: ["$distance", 2] } },
-  });
+    pipeline.push({
+      $addFields: { distance: { $round: ["$distance", 2] } },
+    });
+    if (isValid(startDistance)) startDistance = parseInt(startDistance);
+    else startDistance = 0;
+    if (isValid(endDistance)) endDistance = parseInt(endDistance);
+    else endDistance = 5;
+    pipeline.push({
+      $match: {
+        distance: { $gte: startDistance, $lte: endDistance },
+      },
+    });
+  }
 
   const posts = await Post.aggregate(pipeline);
 
