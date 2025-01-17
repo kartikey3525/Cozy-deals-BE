@@ -4,13 +4,17 @@ const { Rating } = require("../models/rating.model");
 
 const rating = async (user, query, body) => {
   if (!isValid(query.postId)) throw "postId must be a valid";
-  body.userId = user._id;
   if (!isValid(body.rate) || body.rate < 1 || body.rate > 5)
     throw "rate must be between 1 and 5";
-  const rate = await Rating.updateOne(
+  let check = await Rating.findOneAndUpdate(
     { postId: query.postId },
-    { $push: { rating: body } },
+    {},
     { upsert: true }
+  );
+  const rate = await Rating.updateOne(
+    { postId: query.postId, "rating.userId": { $ne: user._id } },
+    { $addToSet: { rating: { userId: user._id, ...body } } },
+    { new: true }
   );
 
   return {
@@ -19,4 +23,30 @@ const rating = async (user, query, body) => {
   };
 };
 
-module.exports = { rating };
+const updateRating = async (user, query, body) => {
+  if (!isValid(query.postId)) throw "postId must be a valid";
+  Object.keys(body).forEach((key) => {
+    if (!isValid(body[key])) delete body[key];
+  });
+  const rate = await Rating.updateOne(
+    { postId: query.postId, "rating.userId": user._id },
+    { $set: { "rating.$": body } },
+    { new: true }
+  );
+  return {
+    msg: msg.success,
+  };
+};
+
+const deleteRating = async (user, query) => {
+  if (!isValid(query.postId)) throw "postId must be a valid";
+  const rate = await Rating.updateOne(
+    { postId: query.postId, "rating.userId": user._id },
+    { $pull: { rating: { userId: user._id } } }
+  );
+  return {
+    msg: msg.success,
+  };
+};
+
+module.exports = { rating, updateRating, deleteRating };
