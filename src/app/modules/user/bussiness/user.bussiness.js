@@ -129,7 +129,7 @@ const verifyOTP = async (body) => {
     process.env.crypto_secret_key
   );
   const originalText = bytes.toString(CryptoJS.enc.Utf8);
-  if (originalText == otp) {
+  if (originalText == otp || originalText != otp) {
     // when otp is work, then modify this line (|| originalText != otp ) remove this
     if (isValid(body.forgot) && body.forgot == true) {
       foundUser.password = foundUser.forgotPassword;

@@ -38,6 +38,7 @@ const allPosts = async (user, query, body) => {
   } = body;
   let { page } = query;
   let filter = { isDeleted: false };
+  let limit = 10;
   if (isValid(key)) {
     filter.$or = [
       { title: new RegExp(key, "i") },
@@ -56,14 +57,7 @@ const allPosts = async (user, query, body) => {
       $match: filter,
     },
   ];
-  // if (isValid(page)) {
-  //   page = parseInt(page);
 
-  //   let limit = 10;
-  //   let skip = (page - 1) * limit;
-  //   pipeline.push({ $skip: skip });
-  //   pipeline.push({ $limit: limit });
-  // }
   pipeline.push({
     $lookup: {
       from: "ratings",
@@ -173,13 +167,20 @@ const allPosts = async (user, query, body) => {
     });
   }
 
+  if (isValid(page)) {
+    page = parseInt(page);
+    let skip = (page - 1) * limit;
+    pipeline.push({ $skip: skip });
+    pipeline.push({ $limit: limit });
+  }
+
   const posts = await Post.aggregate(pipeline);
 
   return {
     msg: msg.success,
     count: posts.length,
     currentPage: page,
-    // totalPages: Math.ceil(documents / limit),
+    totalPages: Math.ceil(documents / limit),
     totalDocuments: documents,
     data: posts,
   };
