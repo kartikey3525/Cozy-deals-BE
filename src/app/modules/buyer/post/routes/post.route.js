@@ -8,10 +8,15 @@ const {
 const multer = require("multer");
 const upload = multer({ dest: "public/" });
 
-const { recentPosts, allPosts } = require("../controllers/post.controller");
+const {
+  recentPosts,
+  allPosts,
+  getPostById,
+} = require("../controllers/post.controller");
 
 // for seller, buyer, admin
 router.get("/recentPosts", authenticate, wrapAsync(recentPosts));
 router.post("/allPosts", authenticate, wrapAsync(allPosts));
+router.get("/getPostById", authenticate, wrapAsync(getPostById));
 
 module.exports = router;

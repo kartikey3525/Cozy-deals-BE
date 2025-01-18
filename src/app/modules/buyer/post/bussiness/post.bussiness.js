@@ -186,4 +186,16 @@ const allPosts = async (user, query, body) => {
   };
 };
 
-module.exports = { recentPosts, allPosts };
+const getPostById = async (user, query) => {
+  if (!isValid(query.id)) throw "Invalid id";
+  const posts = await Post.findById(query.id);
+
+  if (!posts) throw "No posts found";
+
+  return {
+    msg: msg.success,
+    result: posts,
+  };
+};
+
+module.exports = { recentPosts, allPosts, getPostById };

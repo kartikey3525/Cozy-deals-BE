@@ -273,6 +273,18 @@ const deactivateProfile = async (user) => {
   };
 };
 
+const userProfile = async (user, query) => {
+  if (!isValid(query.id)) throw "user id is required";
+  let user1 = await User.findById(query.id).select(
+    "name profile address latitude longitude roleId role isAdminVerified lastSeen isOnline shopName ownerName businessAddress businessScale isDeliveryAvailable currentShopLocationUrl contactNumber contactEmail description facebookUrl instagramUrl youtubeUrl websiteUrl"
+  );
+  if (!user1) throw msg.userNotFound;
+  return {
+    msg: msg.success,
+    data: user1,
+  };
+};
+
 module.exports = {
   sendOTP,
   verifyOTP,
@@ -282,4 +294,5 @@ module.exports = {
   getProfile,
   deleteProfile,
   deactivateProfile,
+  userProfile,
 };

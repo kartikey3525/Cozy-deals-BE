@@ -18,6 +18,7 @@ const {
   getProfile,
   deleteProfile,
   deactivateProfile,
+  userProfile,
 } = require("../controllers/user.controller");
 
 router.post("/sendOTP", wrapAsync(sendOTP));
@@ -28,5 +29,6 @@ router.put("/updateProfile", authenticate, wrapAsync(updateProfile));
 router.get("/getProfile", authenticate, wrapAsync(getProfile));
 router.delete("/deleteProfile", authenticate, wrapAsync(deleteProfile));
 router.delete("/deactivateProfile", authenticate, wrapAsync(deactivateProfile));
+router.get("/userProfile", authenticate, wrapAsync(userProfile));
 
 module.exports = router;
