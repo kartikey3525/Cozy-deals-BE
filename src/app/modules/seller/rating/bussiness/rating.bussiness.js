@@ -149,6 +149,13 @@ const getRating = async (user, query) => {
       $unwind: "$userId",
     },
     {
+      $addFields: {
+        "rating.likeByMe": {
+          $in: [new mongoose.Types.ObjectId(user._id), "$rating.likes.userId"],
+        },
+      },
+    },
+    {
       $group: {
         _id: "$rating.userId",
         userId: { $first: "$userId._id" },
@@ -158,6 +165,7 @@ const getRating = async (user, query) => {
         date: { $first: "$rating.date" },
         feedback: { $first: "$rating.feedback" },
         images: { $first: "$rating.images" },
+        likeByMe: { $first: "$rating.likeByMe" },
         likeCount: {
           $first: {
             $cond: {
@@ -167,13 +175,13 @@ const getRating = async (user, query) => {
             },
           },
         },
-      },
-      commentCount: {
-        $first: {
-          $cond: {
-            if: { $isArray: "$rating.comments" }, // Ensure likeCount is an array
-            then: { $size: "$rating.comments" }, // Get size of the array
-            else: 0, // Default to 0 if not an array
+        commentCount: {
+          $first: {
+            $cond: {
+              if: { $isArray: "$rating.comments" }, // Ensure likeCount is an array
+              then: { $size: "$rating.comments" }, // Get size of the array
+              else: 0, // Default to 0 if not an array
+            },
           },
         },
       },
@@ -182,9 +190,41 @@ const getRating = async (user, query) => {
 
   return {
     msg: msg.success,
+    postId: query.postId,
     result: rate,
     rating: ratings,
   };
 };
 
-module.exports = { rating, updateRating, deleteRating, getRating };
+const likeRating = async (user, query) => {
+  if (!isValid(query.postId)) throw "postId must be a valid";
+  if (!isValid(query.userId)) throw "userId must be a valid";
+  if (!isValid(query.status)) throw "status must be a valid";
+
+  if (query.status == "like") {
+    // like or disLike
+    const rate = await Rating.updateOne(
+      {
+        postId: query.postId,
+        "rating.userId": query.userId,
+        "rating.likes.userId": { $ne: user._id }, // Ensure the user hasn't already liked it
+      },
+      { $addToSet: { "rating.$.likes": { userId: user._id } } },
+      { new: true }
+    );
+  } else {
+    const rate = await Rating.updateOne(
+      {
+        postId: query.postId,
+        "rating.userId": query.userId,
+      },
+      { $pull: { "rating.$.likes": { userId: user._id } } },
+      { new: true }
+    );
+  }
+  return {
+    msg: msg.success,
+  };
+};
+
+module.exports = { rating, updateRating, deleteRating, getRating, likeRating };
