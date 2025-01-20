@@ -3,20 +3,19 @@ const { sendPushNotification } = require("./notification");
 const { Notification } = require("../models/pushNotification.model");
 const { msg } = require("../../../../../config/message");
 const { isValid } = require("../../../../middleware/validator.middleware");
+const mongoose = require("mongoose");
 
 const notifi = async (body) => {
   try {
-    let { ids, title, message, type, image } = body;
+    let { ids, title, message, image } = body;
     let userData = await User.find({ _id: { $in: ids } }).select("fcmToken");
 
     for (let i = 0; i < userData.length; i++) {
-      await Notification.findOneAndUpdate(
+      await Notification.updateOne(
         { userId: userData[i]._id },
         {
           $push: {
             notificationHistory: {
-              type: type,
-              title: title,
               message: message,
               date: new Date().toLocaleString("en-US", {
                 timeZone: "Asia/Kolkata",
@@ -37,9 +36,16 @@ const notifi = async (body) => {
 
 const myNotifications = async (user, query) => {
   const noti = await Notification.aggregate([
-    { $match: { userId: user._id } },
+    { $match: { userId: new mongoose.Types.ObjectId(user._id) } },
     { $unwind: "$notificationHistory" },
-    { $sort: { "notificationHistory.date": -1 } },
+    {
+      $group: {
+        _id: "$notificationHistory._id",
+        message: { $first: "$notificationHistory.message" },
+        date: { $first: "$notificationHistory.date" },
+      },
+    },
+    { $sort: { date: -1 } },
   ]);
   return {
     msg: msg.success,
@@ -50,7 +56,7 @@ const myNotifications = async (user, query) => {
 
 const deleteNotifications = async (user, query) => {
   if (!isValid(query.id)) throw "Invalid id passed";
-  const noti = await Notification.findOneAndUpdate(
+  const noti = await Notification.updateOne(
     { userId: user._id },
     { $pull: { notificationHistory: { _id: query.id } } },
     { new: true }

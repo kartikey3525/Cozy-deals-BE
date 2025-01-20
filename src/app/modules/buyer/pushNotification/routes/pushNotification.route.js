@@ -1,7 +1,7 @@
 let express = require("express");
 let router = express.Router();
 const { wrapAsync } = require("../../../../helpers/router.helper");
-const { adminAuthenticate } = require("../../../../middleware/jwt.middleware");
+const { authenticate } = require("../../../../middleware/jwt.middleware");
 
 const {
   notifi,
@@ -10,10 +10,10 @@ const {
 } = require("../controllers/pushNotification.controller");
 
 router.post("/notifi", wrapAsync(notifi));
-router.get("/myNotifications", userAuthenticate, wrapAsync(myNotifications));
+router.get("/myNotifications", authenticate, wrapAsync(myNotifications));
 router.delete(
   "/deleteNotifications",
-  userAuthenticate,
+  authenticate,
   wrapAsync(deleteNotifications)
 );
 
