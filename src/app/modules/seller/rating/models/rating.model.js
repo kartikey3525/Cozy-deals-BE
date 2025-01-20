@@ -1,5 +1,33 @@
 const mongoose = require("mongoose");
 
+const commentSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  feedback: {
+    type: String,
+    trim: true,
+  },
+  images: [String],
+  likes: [
+    {
+      userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+      date: {
+        type: Date,
+        default: Date.now,
+      },
+    },
+  ],
+  date: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
 const rating = new mongoose.Schema(
   {
     userId: {
@@ -29,22 +57,7 @@ const rating = new mongoose.Schema(
         },
       },
     ],
-    comments: [
-      {
-        userId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
-        },
-        feedback: {
-          type: String,
-          maxlength: 500,
-        },
-        date: {
-          type: Date,
-          default: Date.now,
-        },
-      },
-    ],
+    comments: [commentSchema],
     date: {
       type: Date,
       default: Date.now,

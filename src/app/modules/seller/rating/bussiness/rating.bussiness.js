@@ -166,6 +166,7 @@ const getRating = async (user, query) => {
         feedback: { $first: "$rating.feedback" },
         images: { $first: "$rating.images" },
         likeByMe: { $first: "$rating.likeByMe" },
+        comments: { $first: "$rating.comments" },
         likeCount: {
           $first: {
             $cond: {
@@ -227,4 +228,81 @@ const likeRating = async (user, query) => {
   };
 };
 
-module.exports = { rating, updateRating, deleteRating, getRating, likeRating };
+const commentOnRating = async (user, query, body) => {
+  if (!isValid(query.postId)) throw "postId must be a valid";
+  if (!isValid(query.userId)) throw "userId must be a valid";
+  if (!isValid(body.feedback)) throw "rate must be between 1 and 5";
+
+  const rate = await Rating.updateOne(
+    {
+      postId: query.postId,
+      "rating.userId": query.userId,
+    },
+    { $addToSet: { "rating.$.comments": { userId: user._id, ...body } } },
+    { new: true }
+  );
+
+  return {
+    msg: msg.success,
+  };
+};
+
+const editComment = async (user, query, body) => {
+  Object.keys(body).forEach((key) => {
+    if (!isValid(body[key])) delete body[key];
+  });
+  if (!isValid(query.postId)) throw "postId must be a valid";
+  if (!isValid(query.userId)) throw "userId must be a valid";
+  if (!isValid(query.id)) throw "id must be a valid";
+
+  // Perform the update operation
+  const rate = await Rating.updateOne(
+    {
+      postId: query.postId, // Match the document with the given postId
+      "rating.userId": query.userId, // Match the correct rating subdocument
+      "rating.comments._id": query.id, // Match the specific comment by its ID
+    },
+    {
+      $set: { "rating.$[rateElem].comments.$[commentElem]": body }, // Update the matched comment
+    },
+    {
+      arrayFilters: [
+        { "rateElem.userId": query.userId }, // Ensure the correct rating is targeted
+        { "commentElem._id": query.id }, // Ensure the correct comment is targeted
+      ],
+      new: true, // Only works with findOneAndUpdate; not needed for updateOne
+    }
+  );
+
+  return {
+    msg: msg.success,
+  };
+};
+
+const deleteComment = async (user, query) => {
+  if (!isValid(query.postId)) throw "postId must be a valid";
+  if (!isValid(query.userId)) throw "userId must be a valid";
+  if (!isValid(query.id)) throw "id must be a valid";
+
+  const rate = await Rating.updateOne(
+    {
+      postId: query.postId,
+      "rating.userId": query.userId,
+    },
+    { $pull: { "rating.$.comments": { _id: query.id } } }
+  );
+  return {
+    msg: msg.success,
+  };
+};
+
+module.exports = {
+  rating,
+  updateRating,
+  deleteRating,
+  getRating,
+  likeRating,
+  commentOnRating,
+  editComment,
+  deleteComment,
+};

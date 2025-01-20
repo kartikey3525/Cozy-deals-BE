@@ -4,6 +4,9 @@ const {
   deleteRating,
   getRating,
   likeRating,
+  commentOnRating,
+  editComment,
+  deleteComment,
 } = require("../bussiness/rating.bussiness");
 
 exports.rating = async (req) => await rating(req.user, req.query, req.body);
@@ -12,3 +15,8 @@ exports.updateRating = async (req) =>
 exports.deleteRating = async (req) => await deleteRating(req.user, req.query);
 exports.getRating = async (req) => await getRating(req.user, req.query);
 exports.likeRating = async (req) => await likeRating(req.user, req.query);
+exports.commentOnRating = async (req) =>
+  await commentOnRating(req.user, req.query, req.body);
+exports.editComment = async (req) =>
+  await editComment(req.user, req.query, req.body);
+exports.deleteComment = async (req) => await deleteComment(req.user, req.query);

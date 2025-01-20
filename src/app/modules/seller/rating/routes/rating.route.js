@@ -13,6 +13,9 @@ const {
   deleteRating,
   getRating,
   likeRating,
+  commentOnRating,
+  editComment,
+  deleteComment,
 } = require("../controllers/rating.controller");
 
 // these routes for sellers, buyers, admin
@@ -21,5 +24,8 @@ router.put("/updateRating", authenticate, wrapAsync(updateRating));
 router.delete("/deleteRating", authenticate, wrapAsync(deleteRating));
 router.get("/getRating", authenticate, wrapAsync(getRating));
 router.post("/likeRating", authenticate, wrapAsync(likeRating));
+router.post("/commentOnRating", authenticate, wrapAsync(commentOnRating));
+router.put("/editComment", authenticate, wrapAsync(editComment));
+router.delete("/deleteComment", authenticate, wrapAsync(deleteComment));
 
 module.exports = router;
