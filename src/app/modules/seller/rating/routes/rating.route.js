@@ -11,11 +11,13 @@ const {
   rating,
   updateRating,
   deleteRating,
+  getRating,
 } = require("../controllers/rating.controller");
 
 // these routes for sellers, buyers, admin
 router.post("/rating", authenticate, wrapAsync(rating));
 router.put("/updateRating", authenticate, wrapAsync(updateRating));
 router.delete("/deleteRating", authenticate, wrapAsync(deleteRating));
+router.get("/getRating", authenticate, wrapAsync(getRating));
 
 module.exports = router;

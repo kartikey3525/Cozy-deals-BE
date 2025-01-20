@@ -45,6 +45,10 @@ const rating = new mongoose.Schema(
         },
       },
     ],
+    date: {
+      type: Date,
+      default: Date.now,
+    },
   },
   { _id: false }
 );

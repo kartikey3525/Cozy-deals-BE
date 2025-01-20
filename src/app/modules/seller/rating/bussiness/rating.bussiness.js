@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const { msg } = require("../../../../../config/message");
 const { isValid } = require("../../../../middleware/validator.middleware");
 const { Rating } = require("../models/rating.model");
@@ -45,4 +46,145 @@ const deleteRating = async (user, query) => {
   };
 };
 
-module.exports = { rating, updateRating, deleteRating };
+const getRating = async (user, query) => {
+  // abhi complete nhi hai
+  if (!isValid(query.postId)) throw "postId must be a valid";
+  //rate and it counts
+  let rate = await Rating.aggregate([
+    {
+      $match: { postId: new mongoose.Types.ObjectId(query.postId) },
+    },
+    {
+      $unwind: "$rating", // Flatten the array of ratings (if it's stored as an array)
+    },
+    {
+      $group: {
+        _id: "$rating.rate", // Group by rating value
+        count: { $sum: 1 }, // Count the number of users for each rating
+      },
+    },
+    {
+      $sort: { _id: -1 }, // Sort ratings in descending order (5 to 1)
+    },
+    {
+      $group: {
+        _id: null,
+        ratings: {
+          $push: { rate: "$_id", count: "$count" }, // Reshape the result
+        },
+      },
+    },
+    {
+      $addFields: {
+        // Fill missing ratings with 0 count
+        ratings: {
+          $map: {
+            input: [5, 4, 3, 2, 1], // The range of ratings we want to ensure
+            as: "rate",
+            in: {
+              rate: "$$rate",
+              count: {
+                $reduce: {
+                  input: "$ratings",
+                  initialValue: 0,
+                  in: {
+                    $cond: [
+                      { $eq: ["$$this.rate", "$$rate"] }, // Match the rating
+                      "$$this.count",
+                      "$$value",
+                    ],
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  ]);
+  if (rate.length == 0)
+    rate = [
+      {
+        rate: 5,
+        count: 0,
+      },
+      {
+        rate: 4,
+        count: 0,
+      },
+      {
+        rate: 3,
+        count: 0,
+      },
+      {
+        rate: 2,
+        count: 0,
+      },
+      {
+        rate: 1,
+        count: 0,
+      },
+    ];
+  else rate = rate[0].ratings;
+
+  let ratings = await Rating.aggregate([
+    {
+      $match: { postId: new mongoose.Types.ObjectId(query.postId) },
+    },
+    {
+      $unwind: "$rating",
+    },
+    {
+      $lookup: {
+        from: "users",
+        let: { id: "$rating.userId" },
+        pipeline: [
+          { $match: { $expr: { $eq: ["$_id", "$$id"] } } },
+          { $project: { name: 1, profile: 1 } },
+        ],
+        as: "userId",
+      },
+    },
+    {
+      $unwind: "$userId",
+    },
+    {
+      $group: {
+        _id: "$rating.userId",
+        userId: { $first: "$userId._id" },
+        name: { $first: "$userId.name" },
+        profile: { $first: "$userId.profile" },
+        rate: { $first: "$rating.rate" },
+        date: { $first: "$rating.date" },
+        feedback: { $first: "$rating.feedback" },
+        images: { $first: "$rating.images" },
+        likeCount: {
+          $first: {
+            $cond: {
+              if: { $isArray: "$rating.likes" }, // Ensure likeCount is an array
+              then: { $size: "$rating.likes" }, // Get size of the array
+              else: 0, // Default to 0 if not an array
+            },
+          },
+        },
+      },
+      commentCount: {
+        $first: {
+          $cond: {
+            if: { $isArray: "$rating.comments" }, // Ensure likeCount is an array
+            then: { $size: "$rating.comments" }, // Get size of the array
+            else: 0, // Default to 0 if not an array
+          },
+        },
+      },
+    },
+  ]);
+
+  return {
+    msg: msg.success,
+    result: rate,
+    rating: ratings,
+  };
+};
+
+module.exports = { rating, updateRating, deleteRating, getRating };
