@@ -8,6 +8,9 @@ const mongoose = require("./src/app/db/mongoose");
 const {
   socketchatfunction,
 } = require("./src/app/modules/chatApp/business/socket.business");
+const {
+  socketchatSupportfn,
+} = require("./src/app/modules/chatApp/business/socket.chatSupport");
 const port = process.env.PORT || 3000;
 
 const session = require("express-session");
@@ -53,9 +56,11 @@ app.get("/", (req, res) => {
 // socket function
 const socket = require("socket.io");
 let io = socket(server);
-io = io.of("/chat");
+let chatIo = io.of("/chat");
+let chatSupportIo = io.of("/chatSupport");
 
-socketchatfunction(io);
+socketchatfunction(chatIo);
+socketchatSupportfn(chatSupportIo);
 
 // // Socket connection event
 // io.on("connection", (socket) => {
