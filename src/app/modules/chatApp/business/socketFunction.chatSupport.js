@@ -44,7 +44,7 @@ const sendMsg = async (io, socket, data) => {
       });
     }
     data.senderId = socket.user._id;
-    const chatmsg = await ChatApp.updateOne(
+    const chatmsg = await ChatSupport.updateOne(
       { _id: data.id },
       { $push: { message: data } },
       { new: true }
@@ -64,11 +64,61 @@ const sendMsg = async (io, socket, data) => {
 // Event handler for chat support list // this handler for admin only
 const chatSupportList = async (io, socket, data) => {
   try {
-    socket.join(chatmsg._id.toString());
+    if (socket.user.roleId != 2) {
+      return socket.emit("error", {
+        msg: "only admins can join",
+      });
+    }
+
+    const chatSupportLists = await ChatSupport.aggregate([
+      {
+        $lookup: {
+          from: "users",
+          let: { id: "$userId" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$_id", "$$id"] } } },
+            {
+              $project: {
+                name: 1,
+                profile: 1,
+                roleId: 1,
+                role: 1,
+                isAdminVerified: 1,
+                lastSeen: 1,
+                isOnline: 1,
+              },
+            },
+          ],
+          as: "userData",
+        },
+      },
+      {
+        $unwind: "$userData",
+      },
+      {
+        $addFields: {
+          lastMsg: { $arrayElemAt: ["$message", -1] }, // Get the last element of the array
+        },
+      },
+      {
+        $sort: {
+          updatedAt: -1,
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          userId: 1,
+          userData: 1,
+          lastMsg: 1,
+        },
+      },
+    ]);
 
     socket.emit("chatSupportList", {
       msg: msg.success,
-      data: socket.user,
+      count: chatSupportLists.length,
+      data: chatSupportLists,
     });
   } catch (error) {
     console.log(error.message);
