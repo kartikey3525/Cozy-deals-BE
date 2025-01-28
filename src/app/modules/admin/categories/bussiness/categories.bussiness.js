@@ -137,7 +137,7 @@ const getCategory = async (user, query) => {
         hasSubcategories:
           category.subCategories && category.subCategories.length > 0,
       };
-      delete categoryObject.subCategories; // Remove the 'exam' property
+      // delete categoryObject.subCategories; // Remove the 'exam' property
       return categoryObject;
     });
   } else if (index.split(".").length === 1) {
@@ -150,7 +150,7 @@ const getCategory = async (user, query) => {
         hasSubcategories:
           category.subCategories && category.subCategories.length > 0,
       };
-      delete categoryObject.subCategories; // Remove the 'subCategories' property
+      // delete categoryObject.subCategories; // Remove the 'subCategories' property
       return categoryObject;
     });
   } else if (index.split(".").length > 1) {
@@ -170,7 +170,7 @@ const getCategory = async (user, query) => {
             hasSubcategories:
               category.subCategories && category.subCategories.length > 0,
           };
-          delete categoryObject.subCategories; // Remove the 'subCategories' property
+          // delete categoryObject.subCategories; // Remove the 'subCategories' property
           return categoryObject;
         });
       } else {
