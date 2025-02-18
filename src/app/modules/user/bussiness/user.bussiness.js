@@ -6,6 +6,10 @@ const { emailOtp } = require("../../../util/emailOtp");
 
 const { User } = require("../models/user.model");
 const CryptoJS = require("crypto-js");
+const {
+  createManyPost,
+  get,
+} = require("../../seller/post/bussiness/post.bussiness");
 
 let validator = require("validator");
 
@@ -237,14 +241,20 @@ const updateProfile = async (user, body) => {
     { new: true }
   );
 
+  if (body.categoriesPost && body.categoriesPost.length > 0) {
+    let data2 = await createManyPost(user, body.categoriesPost);
+  }
+
   return {
     msg: msg.success,
   };
 };
 
 const getProfile = async (user) => {
-  let user1 = await User.findOne({ _id: user._id, isDeleted: false });
+  let user1 = await User.findOne({ _id: user._id, isDeleted: false }).lean();
   if (!user1) throw msg.userNotFound;
+  let categoriesPost = await get(user);
+  user1.categoriesPost = categoriesPost.data;
   return {
     msg: msg.success,
     data: user1,

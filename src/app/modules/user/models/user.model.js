@@ -157,7 +157,6 @@ const UserSchema = new mongoose.Schema(
     instagramUrl: { type: String, trim: true },
     youtubeUrl: { type: String, trim: true },
     websiteUrl: { type: String, trim: true },
-    categories: [String],
   },
   { timestamps: true }
 );

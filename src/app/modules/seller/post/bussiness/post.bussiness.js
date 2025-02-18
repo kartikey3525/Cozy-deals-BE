@@ -55,4 +55,21 @@ const deletes = async (user, query) => {
   };
 };
 
-module.exports = { create, get, update, deletes };
+const createManyPost = async (user, bodyArray) => {
+  try {
+    const bodyWithUserId = bodyArray.map((body) => ({
+      ...body,
+      userId: user._id,
+    }));
+
+    const createdPosts = await Post.insertMany(bodyWithUserId);
+
+    return {
+      msg: msg.success,
+    };
+  } catch (error) {
+    throw new Error(msg.error);
+  }
+};
+
+module.exports = { create, get, update, deletes, createManyPost };
