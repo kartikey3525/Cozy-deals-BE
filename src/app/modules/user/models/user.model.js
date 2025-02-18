@@ -16,7 +16,17 @@ const UserSchema = new mongoose.Schema(
       trim: true,
       // unique: true,
     },
-    // userName: {
+    gender:{
+      type: String,
+      enum: ["male", "female", "other"],
+      default: "male",
+      trim: true,
+    },
+    dob:{
+      type: Date,
+      required: true,
+    },
+    // use,rName: {
     //   type: String,
     //   trim: true,
     //   unique: true,
@@ -82,6 +92,13 @@ const UserSchema = new mongoose.Schema(
     fcmToken: {
       type: String,
     },
+
+    openTime:{
+      type: Date,
+    },
+    closeTime:{
+      type: Date,
+    },
     lastSeen: {
       type: Date,
     }, // Timestamp of the user's last activity
@@ -140,6 +157,7 @@ const UserSchema = new mongoose.Schema(
     instagramUrl: { type: String, trim: true },
     youtubeUrl: { type: String, trim: true },
     websiteUrl: { type: String, trim: true },
+    categories: [String],
   },
   { timestamps: true }
 );

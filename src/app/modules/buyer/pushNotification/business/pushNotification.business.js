@@ -66,4 +66,33 @@ const deleteNotifications = async (user, query) => {
   };
 };
 
-module.exports = { notifi, myNotifications, deleteNotifications };
+const notifi1 = async (body) => {
+  try {
+    let { userData, title, message, image } = body;
+    // let userData = await User.find({ _id: { $in: ids } }).select("fcmToken");
+
+    for (let i = 0; i < userData.length; i++) {
+      await Notification.updateOne(
+        { userId: userData[i]._id },
+        {
+          $push: {
+            notificationHistory: {
+              message: message,
+              date: new Date().toLocaleString("en-US", {
+                timeZone: "Asia/Kolkata",
+              }),
+            },
+          },
+        },
+        { new: true, upsert: true }
+      );
+      await sendPushNotification(userData[i].fcmToken, title, message, image);
+    }
+
+    return "successfully notifi";
+  } catch (error) {
+    return error.message;
+  }
+};
+
+module.exports = { notifi, myNotifications, deleteNotifications, notifi1 };
