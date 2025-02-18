@@ -23,8 +23,7 @@ const UserSchema = new mongoose.Schema(
       trim: true,
     },
     dob:{
-      type: Date,
-      required: true,
+      type: Date
     },
     // use,rName: {
     //   type: String,

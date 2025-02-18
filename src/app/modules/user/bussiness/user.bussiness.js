@@ -75,6 +75,7 @@ const sendOTP = async (body) => {
     }
     foundUser.otp = ciphertext;
     foundUser.otpDate = newDate;
+    if (isValid(body.fcmToken)) foundUser.fcmToken = body.fcmToken;
     await foundUser.save();
   } else {
     // if (roleId != 1 && roleId != 2) body.status = "approved";
