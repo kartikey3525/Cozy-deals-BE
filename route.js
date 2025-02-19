@@ -8,6 +8,8 @@ const Buyer_Post_routes = require("./src/app/modules/buyer/post/routes/post.rout
 const Rating_routes = require("./src/app/modules/seller/rating/routes/rating.route");
 const PushNotification_routes = require("./src/app/modules/buyer/pushNotification/routes/pushNotification.route");
 const ReportIssue_routes = require("./src/app/modules/seller/reportIssue/routes/reportIssue.route");
+const Faq_routes = require("./src/app/modules/FAQ/route/faq.route")
+
 
 //All modules path and path-handler array
 module.exports = [
@@ -50,5 +52,9 @@ module.exports = [
   {
     path: "/api/issues",
     handler: ReportIssue_routes,
+  },
+  {
+    path:"/api/faq" ,
+    handler: Faq_routes,  
   },
 ];

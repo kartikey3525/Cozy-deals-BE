@@ -24,7 +24,7 @@ router.get("/getCategory", authenticate, wrapAsync(getCategory));
 
 //requirements post
 router.post("/postRequirement", buyerAuthenticate, wrapAsync(postRequirement));
-router.get("/getRequirement", buyerAuthenticate, wrapAsync(getRequirement));
+router.get("/getRequirement", authenticate, wrapAsync(getRequirement));
 router.put(
   "/updateRequirement",
   buyerAuthenticate,

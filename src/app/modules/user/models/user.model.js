@@ -116,11 +116,12 @@ const UserSchema = new mongoose.Schema(
     shopName: { type: String, trim: true },
     ownerName: { type: String, trim: true },
     businessAddress: {
-      street: { type: String, trim: true },
-      city: { type: String, trim: true },
-      state: { type: String, trim: true },
-      pinCode: { type: String, trim: true },
-      country: { type: String, trim: true },
+      type: String, trim: true
+      // street: { type: String, trim: true },
+      // city: { type: String, trim: true },
+      // state: { type: String, trim: true },
+      // pinCode: { type: String, trim: true },
+      // country: { type: String, trim: true },
     },
     businessScale: {
       type: String,
