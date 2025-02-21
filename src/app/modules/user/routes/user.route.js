@@ -20,6 +20,7 @@ const {
   deleteProfile,
   deactivateProfile,
   userProfile,
+  uploadImage,
 } = require("../controllers/user.controller");
 
 router.post("/sendOTP", wrapAsync(sendOTP));
@@ -28,9 +29,17 @@ router.post("/login", wrapAsync(login));
 router.post("/google", wrapAsync(google));
 router.put("/updateProfile", authenticate, wrapAsync(updateProfile));
 router.get("/getProfile", authenticate, wrapAsync(getProfile));
-router.get("/getAllProfile",wrapAsync(getAllProfile));
+router.get("/getAllProfile", wrapAsync(getAllProfile));
 router.delete("/deleteProfile", authenticate, wrapAsync(deleteProfile));
 router.delete("/deactivateProfile", authenticate, wrapAsync(deactivateProfile));
 router.get("/userProfile", authenticate, wrapAsync(userProfile));
+router.post(
+  "/uploadImage",
+  upload("serviceApplication").fields([
+    { name: "image", maxCount: 10 },
+    // { name: "profile", maxCount: 1 },
+  ]),
+  wrapAsync(uploadImage)
+);
 
 module.exports = router;

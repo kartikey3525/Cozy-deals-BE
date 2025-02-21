@@ -1,4 +1,4 @@
-// var aws = require("aws-sdk");
+var aws = require("aws-sdk");
 var multer = require("multer");
 var multerS3 = require("multer-s3");
 
@@ -18,7 +18,7 @@ exports.upload = (folder) =>
   multer({
     storage: multerS3({
       s3: s3Client, // Use the AWS SDK v3 S3 client
-      bucket: "", // Your S3 bucket name
+      bucket: "localkhabarnews", // Your S3 bucket name
       acl: "public-read", // Set the access control list (permissions) as needed
       metadata: function (req, file, cb) {
         // Store custom metadata (optional)

@@ -6,8 +6,8 @@
     "crypto_secret_key": "secretOrPrivateKey",
     "limit": 20,
     "runUsingCluster": false,
-    "AccessKeyId": "",
-    "SecretAccessKey": ""
+    "AccessKeyId": "AKIAVYV52A6AIRGYOE7U",
+    "SecretAccessKey": "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"
   },
   "prod": {
     "PORT": 8080,

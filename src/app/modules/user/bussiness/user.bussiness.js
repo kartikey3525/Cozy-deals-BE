@@ -262,7 +262,6 @@ const getProfile = async (user) => {
   };
 };
 
-
 const getAllProfile = async () => {
   let users = await User.find({ roleId: 1, isDeleted: false }).lean();
 
@@ -282,8 +281,6 @@ const getAllProfile = async () => {
     data: usersWithCategories,
   };
 };
-
-
 
 const deleteProfile = async (user) => {
   let user1 = await User.findOneAndUpdate(
@@ -319,6 +316,18 @@ const userProfile = async (user, query) => {
   };
 };
 
+const uploadImage = async (files, body) => {
+  let image = [];
+  for (let i = 0; i < files.image.length; i++) {
+    image.push(files.image[i].location);
+  }
+
+  return {
+    msg: msg.success,
+    data: image,
+  };
+};
+
 module.exports = {
   sendOTP,
   verifyOTP,
@@ -330,4 +339,5 @@ module.exports = {
   deleteProfile,
   deactivateProfile,
   userProfile,
+  uploadImage,
 };

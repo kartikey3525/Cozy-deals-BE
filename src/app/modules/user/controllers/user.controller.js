@@ -9,6 +9,7 @@ const {
   deleteProfile,
   deactivateProfile,
   userProfile,
+  uploadImage,
 } = require("../bussiness/user.bussiness");
 
 exports.sendOTP = async (req) => await sendOTP(req.body);
@@ -21,3 +22,4 @@ exports.getAllProfile = async (req) => await getAllProfile(req.user);
 exports.deleteProfile = async (req) => await deleteProfile(req.user);
 exports.deactivateProfile = async (req) => await deactivateProfile(req.user);
 exports.userProfile = async (req) => await userProfile(req.user, req.query);
+exports.uploadImage = async (req) => await uploadImage(req.files, req.body);
