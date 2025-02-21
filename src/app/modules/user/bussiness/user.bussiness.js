@@ -262,6 +262,29 @@ const getProfile = async (user) => {
   };
 };
 
+
+const getAllProfile = async () => {
+  let users = await User.find({ roleId: 1, isDeleted: false }).lean();
+
+  if (!users || users.length === 0) throw msg.userNotFound;
+
+  // Fetch categoriesPost concurrently for each user using Promise.all
+  const usersWithCategories = await Promise.all(
+    users.map(async (user) => {
+      let categoriesPost = await get(user);
+      user.categoriesPost = categoriesPost.data;
+      return user;
+    })
+  );
+
+  return {
+    msg: msg.success,
+    data: usersWithCategories,
+  };
+};
+
+
+
 const deleteProfile = async (user) => {
   let user1 = await User.findOneAndUpdate(
     { _id: user._id, isDeleted: false },
@@ -303,6 +326,7 @@ module.exports = {
   google,
   updateProfile,
   getProfile,
+  getAllProfile,
   deleteProfile,
   deactivateProfile,
   userProfile,

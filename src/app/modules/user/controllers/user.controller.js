@@ -5,6 +5,7 @@ const {
   google,
   updateProfile,
   getProfile,
+  getAllProfile,
   deleteProfile,
   deactivateProfile,
   userProfile,
@@ -16,6 +17,7 @@ exports.login = async (req) => await login(req.body);
 exports.google = async (req) => await google(req.body);
 exports.updateProfile = async (req) => await updateProfile(req.user, req.body);
 exports.getProfile = async (req) => await getProfile(req.user);
+exports.getAllProfile = async (req) => await getAllProfile(req.user);
 exports.deleteProfile = async (req) => await deleteProfile(req.user);
 exports.deactivateProfile = async (req) => await deactivateProfile(req.user);
 exports.userProfile = async (req) => await userProfile(req.user, req.query);

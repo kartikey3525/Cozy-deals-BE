@@ -31,12 +31,12 @@ const UserSchema = new mongoose.Schema(
     //   unique: true,
     // },
     googleData: {},
-    profile: {
+    profile: [{
       type: String,
       trim: true,
       default:
         "https://images.pexels.com/photos/674010/pexels-photo-674010.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    },
+    }],
     password: {
       type: String,
       trim: true,
@@ -93,10 +93,10 @@ const UserSchema = new mongoose.Schema(
     },
 
     openTime:{
-      type: Date,
+      type: String,
     },
     closeTime:{
-      type: Date,
+      type: String,
     },
     lastSeen: {
       type: Date,
@@ -104,7 +104,11 @@ const UserSchema = new mongoose.Schema(
     isOnline: {
       type: Boolean,
       default: false,
-    }, // Indicates if the user is currently online
+    },
+    description:{
+      type: String,
+      maxlength: 1000, // Limit description length
+    },  // Indicates if the user is currently online
     socketId: {
       type: String,
       trim: true,

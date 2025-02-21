@@ -16,6 +16,7 @@ const {
   google,
   updateProfile,
   getProfile,
+  getAllProfile,
   deleteProfile,
   deactivateProfile,
   userProfile,
@@ -27,6 +28,7 @@ router.post("/login", wrapAsync(login));
 router.post("/google", wrapAsync(google));
 router.put("/updateProfile", authenticate, wrapAsync(updateProfile));
 router.get("/getProfile", authenticate, wrapAsync(getProfile));
+router.get("/getAllProfile",wrapAsync(getAllProfile));
 router.delete("/deleteProfile", authenticate, wrapAsync(deleteProfile));
 router.delete("/deactivateProfile", authenticate, wrapAsync(deactivateProfile));
 router.get("/userProfile", authenticate, wrapAsync(userProfile));
