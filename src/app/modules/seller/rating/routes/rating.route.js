@@ -16,6 +16,7 @@ const {
   commentOnRating,
   editComment,
   deleteComment,
+  recentRating,
 } = require("../controllers/rating.controller");
 
 // these routes for sellers, buyers, admin
@@ -27,5 +28,5 @@ router.post("/likeRating", authenticate, wrapAsync(likeRating));
 router.post("/commentOnRating", authenticate, wrapAsync(commentOnRating));
 router.put("/editComment", authenticate, wrapAsync(editComment));
 router.delete("/deleteComment", authenticate, wrapAsync(deleteComment));
-
+router.get("/recentRating", authenticate, wrapAsync(recentRating));
 module.exports = router;
