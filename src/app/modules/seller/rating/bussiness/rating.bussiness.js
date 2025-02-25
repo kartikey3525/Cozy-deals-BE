@@ -248,11 +248,22 @@ const getRating = async (user, query) => {
         date: "$rating.date",
         feedback: "$rating.feedback",
         images: "$rating.images",
+
         likeByMe: {
-          $in: [new mongoose.Types.ObjectId(user._id), "$rating.likes.userId"],
+          $in: [
+            new mongoose.Types.ObjectId(user._id),
+            { $ifNull: ["$rating.likes", []] },
+          ],
+        },
+        disLikeByMe: {
+          $in: [
+            new mongoose.Types.ObjectId(user._id),
+            { $ifNull: ["$rating.disLikes", []] },
+          ],
         },
         comments: "$rating.comments",
         likeCount: { $size: { $ifNull: ["$rating.likes", []] } },
+        disLikeCount: { $size: { $ifNull: ["$rating.disLikes", []] } },
         commentCount: { $size: { $ifNull: ["$rating.comments", []] } },
       },
     },
@@ -279,8 +290,9 @@ const likeRating = async (user, query) => {
   if (!isValid(query.userId)) throw "userId must be a valid";
   if (!isValid(query.status)) throw "status must be a valid";
 
-  if (query.status == "like") {
-    // like or disLike
+  if (query.status == "liketrue") {
+    // liketrue, disliketrue, likefalse, dislikefalse
+
     const rate = await Rating.updateOne(
       {
         postId: query.postId,
@@ -290,13 +302,52 @@ const likeRating = async (user, query) => {
       { $addToSet: { "rating.$.likes": { userId: user._id } } },
       { new: true }
     );
-  } else {
+    const rate1 = await Rating.updateOne(
+      {
+        postId: query.postId,
+        "rating.userId": query.userId,
+      },
+      { $pull: { "rating.$.disLikes": { userId: user._id } } },
+      { new: true }
+    );
+  } else if (query.status == "disliketrue") {
+    // liketrue, disliketrue, likefalse, dislikefalse
+
     const rate = await Rating.updateOne(
+      {
+        postId: query.postId,
+        "rating.userId": query.userId,
+        "rating.disLikes.userId": { $ne: user._id }, // Ensure the user hasn't already liked it
+      },
+      { $addToSet: { "rating.$.disLikes": { userId: user._id } } },
+      { new: true }
+    );
+    const rate1 = await Rating.updateOne(
       {
         postId: query.postId,
         "rating.userId": query.userId,
       },
       { $pull: { "rating.$.likes": { userId: user._id } } },
+      { new: true }
+    );
+  } else if (query.status == "likefalse") {
+    // liketrue, disliketrue, likefalse, dislikefalse
+    const rate1 = await Rating.updateOne(
+      {
+        postId: query.postId,
+        "rating.userId": query.userId,
+      },
+      { $pull: { "rating.$.likes": { userId: user._id } } },
+      { new: true }
+    );
+  } else if (query.status == "dislikefalse") {
+    // liketrue, disliketrue, likefalse, dislikefalse
+    const rate1 = await Rating.updateOne(
+      {
+        postId: query.postId,
+        "rating.userId": query.userId,
+      },
+      { $pull: { "rating.$.disLikes": { userId: user._id } } },
       { new: true }
     );
   }
