@@ -154,6 +154,9 @@ const UserSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    socialMedia:{
+      type: String,
+    },
     contactNumber: { type: String, trim: true },
     contactEmail: { type: String, trim: true },
     description: { type: String, trim: true },

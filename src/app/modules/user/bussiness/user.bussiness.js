@@ -230,7 +230,8 @@ const updateProfile = async (user, body) => {
   Object.keys(body).forEach((key) => {
     if (!isValid(body[key])) delete body[key];
   });
-  if (isValid(body.email) || isValid(body.phone)) {
+  if (isValid(body.email) ) {
+    // || isValid(body.phone)
     let existingUser = await User.findOne({
       $or: [{ email: body.email }],
       _id: { $ne: user._id },
@@ -405,6 +406,7 @@ const userProfile = async (user, query) => {
 const uploadImage = async (files, body) => {
   let image = [];
   for (let i = 0; i < files.image.length; i++) {
+    console.log("Uploading file:", files.image[i].location);
     image.push(files.image[i].location);
   }
 
