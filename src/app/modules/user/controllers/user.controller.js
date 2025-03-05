@@ -10,6 +10,7 @@ const {
   deactivateProfile,
   userProfile,
   uploadImage,
+  googleLogin,
 } = require("../bussiness/user.bussiness");
 
 exports.sendOTP = async (req) => await sendOTP(req.body);
@@ -23,3 +24,4 @@ exports.deleteProfile = async (req) => await deleteProfile(req.user);
 exports.deactivateProfile = async (req) => await deactivateProfile(req.user);
 exports.userProfile = async (req) => await userProfile(req.user, req.query);
 exports.uploadImage = async (req) => await uploadImage(req.files, req.body);
+exports.googleLogin = async (req) => await googleLogin(req.body);

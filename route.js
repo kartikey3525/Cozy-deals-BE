@@ -10,7 +10,6 @@ const PushNotification_routes = require("./src/app/modules/buyer/pushNotificatio
 const ReportIssue_routes = require("./src/app/modules/seller/reportIssue/routes/reportIssue.route");
 const Faq_routes = require("./src/app/modules/FAQ/route/faq.route")
 
-
 //All modules path and path-handler array
 module.exports = [
   {

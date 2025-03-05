@@ -1,9 +1,11 @@
 const { msg } = require("../../../../config/message");
+const axios = require("axios");
+const jwt = require("jsonwebtoken");
 const { generateAuthToken } = require("../../../util/generate.token");
 const { isValid } = require("../../../middleware/validator.middleware");
 const { sendSmsFromSpringedge } = require("../../../util/springedge");
 const { emailOtp } = require("../../../util/emailOtp");
-
+const {getRating} = require("../../seller/rating/bussiness/rating.bussiness");
 const { User } = require("../models/user.model");
 const CryptoJS = require("crypto-js");
 const {
@@ -230,7 +232,7 @@ const updateProfile = async (user, body) => {
   });
   if (isValid(body.email) || isValid(body.phone)) {
     let existingUser = await User.findOne({
-      $or: [{ email: body.email }, { phone: body.phone }],
+      $or: [{ email: body.email }],
       _id: { $ne: user._id },
       isDeleted: false,
     });
@@ -251,35 +253,119 @@ const updateProfile = async (user, body) => {
   };
 };
 
+// const getProfile = async (user) => {
+//   let user1 = await User.findOne({ _id: user._id, isDeleted: false }).lean();
+//   if (!user1) throw msg.userNotFound;
+//   let categoriesPost = await get(user);
+//   user1.categoriesPost = categoriesPost.data;
+//   return {
+//     msg: msg.success,
+//     data: user1,
+//   };
+// };
+
 const getProfile = async (user) => {
-  let user1 = await User.findOne({ _id: user._id, isDeleted: false }).lean();
-  if (!user1) throw msg.userNotFound;
-  let categoriesPost = await get(user);
-  user1.categoriesPost = categoriesPost.data;
-  return {
-    msg: msg.success,
-    data: user1,
-  };
+    let user1 = await User.findOne({ _id: user._id, isDeleted: false }).lean();
+    if (!user1) throw msg.userNotFound;
+
+    let categoriesPost = await get(user);
+    user1.categoriesPost = categoriesPost.data
+    if (user1.categoriesPost.length === 0) {
+      console.log('No categories post available for this user.');
+      user1.averageRating = 0;
+      return { msg: msg.success, data: user1 };
+    }
+    let postId = user1.categoriesPost[0]._id;  // Assume postId is the first one in categoriesPost
+
+   console.log('Fetching rating for postId:', postId);
+
+    let ratingData = await getRating(user, { postId:user1._id })
+    console.log('Rating data response:', ratingData);
+
+    if (ratingData && ratingData.averageRating) {
+      console.log('Assigning averageRating from getRating:', ratingData.averageRating);
+      user1.averageRating = parseFloat(ratingData.averageRating); 
+    } else {
+      console.log('No valid averageRating found in getRating, setting default value 0.');
+      user1.averageRating = 0;
+    }
+
+    return {
+      msg: msg.success,
+      data: user1,
+    };
 };
 
+
+// const getAllProfile = async () => {
+//   let users = await User.find({ roleId: 1, isDeleted: false }).lean();
+
+//   if (!users || users.length === 0) throw msg.userNotFound;
+
+//   // Fetch categoriesPost concurrently for each user using Promise.all
+//   const usersWithCategories = await Promise.all(
+//     users.map(async (user) => {
+//       let categoriesPost = await get(user);
+//       user.categoriesPost = categoriesPost.data;
+//       return user;
+//     })
+//   );
+
+//   return {
+//     msg: msg.success,
+//     data: usersWithCategories,
+//   };
+// };
+
 const getAllProfile = async () => {
-  let users = await User.find({ roleId: 1, isDeleted: false }).lean();
+  try {
+    // Fetch all users with roleId 1 and not deleted
+    let users = await User.find({ roleId: 1, isDeleted: false }).lean();
 
-  if (!users || users.length === 0) throw msg.userNotFound;
+    if (!users || users.length === 0) throw msg.userNotFound;
 
-  // Fetch categoriesPost concurrently for each user using Promise.all
-  const usersWithCategories = await Promise.all(
-    users.map(async (user) => {
-      let categoriesPost = await get(user);
-      user.categoriesPost = categoriesPost.data;
-      return user;
-    })
-  );
+    // Fetch categoriesPost concurrently for each user using Promise.all
+    const usersWithCategoriesAndRatings = await Promise.all(
+      users.map(async (user) => {
+        // Fetch categoriesPost for each user
+        let categoriesPost = await get(user);
+        user.categoriesPost = categoriesPost.data;
 
-  return {
-    msg: msg.success,
-    data: usersWithCategories,
-  };
+        // If no categoriesPost data, set averageRating to 0
+        if (user.categoriesPost.length === 0) {
+          console.log(`No categories post available for user ${user._id}`);
+          user.averageRating = 0;
+        } else {
+          // If categoriesPost is available, calculate the average rating
+          let postId = user.categoriesPost[0]._id; // Assuming postId is the first in categoriesPost
+          console.log('Fetching rating for postId:', postId);
+
+          // Fetch rating data for the user (You might need to adjust this to fit your rating system)
+          let ratingData = await getRating(user, { postId: user._id });
+
+          // If rating data exists, assign the average rating; otherwise, set it to 0
+          if (ratingData && ratingData.averageRating) {
+            console.log('Assigning averageRating from getRating:', ratingData.averageRating);
+            user.averageRating = parseFloat(ratingData.averageRating); // Ensure it's a number
+          } else {
+            console.log(`No valid averageRating found for user ${user._id}, setting default to 0.`);
+            user.averageRating = 0;
+          }
+        }
+
+        return user; // Return user with categoriesPost and averageRating
+      })
+    );
+
+    return {
+      msg: msg.success,
+      data: usersWithCategoriesAndRatings, // Return all users with their categoriesPost and averageRating
+    };
+
+  } catch (error) {
+    console.error('Error in getAllProfile:', error);
+    return { msg: 'Error fetching all profiles', error: error.message };
+  }
 };
 
 const deleteProfile = async (user) => {
@@ -328,6 +414,49 @@ const uploadImage = async (files, body) => {
   };
 };
 
+const googleLogin = async (body) => {
+  let { idToken, fcmToken } = body;
+
+  if (!idToken) {
+    throw "Google ID token is required";
+  }
+
+  // Verify the Google ID token
+  const googleResponse = await axios.get(
+    `https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`
+  );
+
+  const { email, name, picture, sub: googleId } = googleResponse.data;
+
+  let user = await User.findOne({ email });
+
+  if (!user) {
+    // Create a new user if not exists
+    user = new User({
+      googleData: { googleId },
+      name,
+      email,
+      profile: [picture],
+      fcmToken, // Save FCM token
+    });
+  } else {
+    // Update FCM token for existing user
+    user.fcmToken = fcmToken;
+  }
+
+  await user.save();
+
+  // Generate JWT token for authentication
+  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "7d",
+  });
+
+  return {
+      ...user.toObject(),
+      token,
+  };
+};
+
 module.exports = {
   sendOTP,
   verifyOTP,
@@ -340,4 +469,5 @@ module.exports = {
   deactivateProfile,
   userProfile,
   uploadImage,
+  googleLogin,
 };

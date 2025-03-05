@@ -16,5 +16,4 @@ router.delete(
   authenticate,
   wrapAsync(deleteNotifications)
 );
-
 module.exports = router;

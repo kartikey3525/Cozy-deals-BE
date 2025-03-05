@@ -3,22 +3,49 @@ const { msg } = require("../../../../../config/message");
 const { isValid } = require("../../../../middleware/validator.middleware");
 const { Post } = require("../../../seller/post/models/post.model");
 const { User } = require("../../../user/models/user.model");
+// const {getRating } = require ("../../../seller/rating/bussiness/");
+
+// const recentPosts = async (user, query) => {
+//   let { page = 1 } = query;
+//   let limit = 10;
+//   let skip = (page - 1) * limit;
+//   let documents = await Post.countDocuments({
+//      isDeleted: false
+//     });
+//   const posts = await Post.find({ 
+//     isDeleted: false
+//    })
+//     .sort({ createdAt: -1 })
+//     .skip(skip)
+//     .limit(limit);
+//   return {
+//     msg: msg.success,
+//     count: posts.length,
+//     currentPage: page,
+//     totalPages: Math.ceil(documents / limit),
+//     totalDocuments: documents,
+//     data: posts,
+//   };
+// };
 
 const recentPosts = async (user, query) => {
   let { page = 1 } = query;
   let limit = 10;
   let skip = (page - 1) * limit;
-  let documents = await Post.countDocuments({ isDeleted: false });
+
+  let totalDocuments = await Post.countDocuments({ isDeleted: false });
+
   const posts = await Post.find({ isDeleted: false })
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit);
+
   return {
-    msg: msg.success,
+    msg: "Success",
     count: posts.length,
     currentPage: page,
-    totalPages: Math.ceil(documents / limit),
-    totalDocuments: documents,
+    totalPages: Math.ceil(totalDocuments / limit),
+    totalDocuments: totalDocuments,
     data: posts,
   };
 };
@@ -39,6 +66,7 @@ const recentPosts = async (user, query) => {
 //   let { page } = query;
 //   let filter = { isDeleted: false };
 //   let limit = 10;
+  
 //   if (isValid(key)) {
 //     filter.$or = [
 //       { title: new RegExp(key, "i") },
@@ -46,133 +74,40 @@ const recentPosts = async (user, query) => {
 //       { categories: new RegExp(key, "i") },
 //     ];
 //   }
+  
 //   if (isValid(categories) && categories.length > 0)
 //     filter.categories = { $in: categories };
+  
 //   if (myPost == true) filter.userId = user._id;
 //   else if (isValid(userId)) filter.userId = new mongoose.Types.ObjectId(userId);
+  
 //   let documents = await Post.countDocuments(filter);
 
 //   let pipeline = [
+//     { $match: filter },
 //     {
-//       $match: filter,
+//       $lookup: {
+//         from: "users", // Assuming the users collection is named "users"
+//         localField: "userId",
+//         foreignField: "_id",
+//         as: "userData",
+//       },
+//     },
+//     {
+//       $unwind: {
+//         path: "$userData",
+//         preserveNullAndEmptyArrays: true,
+//       },
+//     },
+//     {
+//       $addFields: {
+//         shopName: "$userData.shopName", // Add the shop name field
+//         categories: "$userData.categories", // If the user has categories, you can add that too
+//       },
 //     },
 //   ];
 
-//   pipeline.push({
-//     $lookup: {
-//       from: "ratings",
-//       let: { id: "$_id" },
-//       pipeline: [
-//         { $match: { $expr: { $eq: ["$postId", "$$id"] } } },
-//         {
-//           $unwind: "$rating", // Deconstruct the rating array into individual documents
-//         },
-//         {
-//           $group: {
-//             _id: "$_id",
-//             averageRating: { $avg: "$rating.rate" }, // Calculate the average rating
-//             totalRatings: { $sum: 1 }, // Optional: Count total ratings
-//           },
-//         },
-//         {
-//           $project: {
-//             _id: 1,
-//             averageRating: { $round: ["$averageRating", 2] }, // Round to 2 decimal places
-//             totalRatings: 1,
-//           },
-//         },
-//       ],
-//       as: "rating",
-//     },
-//   });
-//   pipeline.push({
-//     $addFields: {
-//       rating: {
-//         $ifNull: [
-//           { $arrayElemAt: ["$rating", 0] }, // First element of the array (or null if the array is empty)
-//           { averageRating: 0, totalRatings: 0 }, // Default value if the first element is null
-//         ],
-//       },
-//     },
-//   });
-//   if (isValid(topRated)) {
-//     pipeline.push({ $sort: { "rating.averageRating": -1 } });
-//   }
-//   if (isValid(rating)) {
-//     rating = parseInt(rating);
-//     pipeline.push({ $match: { "rating.averageRating": { $gte: rating } } });
-//   }
-
-//   // let userData = await User.findById(user._id).select("longitude latitude");
-
-//   if (isValid(latitude) && isValid(longitude)) {
-//     pipeline.push({
-//       $addFields: {
-//         distance: {
-//           $let: {
-//             vars: {
-//               lat1: { $toDouble: "$latitude" },
-//               lon1: { $toDouble: "$longitude" },
-//               lat2: { $toDouble: latitude },
-//               lon2: { $toDouble: longitude },
-//               earthRadius: 6371, // Earth's radius in kilometers (valid variable name)
-//             },
-//             in: {
-//               $multiply: [
-//                 "$$earthRadius",
-//                 {
-//                   $acos: {
-//                     $add: [
-//                       {
-//                         $multiply: [
-//                           { $sin: { $degreesToRadians: "$$lat1" } },
-//                           { $sin: { $degreesToRadians: "$$lat2" } },
-//                         ],
-//                       },
-//                       {
-//                         $multiply: [
-//                           { $cos: { $degreesToRadians: "$$lat1" } },
-//                           { $cos: { $degreesToRadians: "$$lat2" } },
-//                           {
-//                             $cos: {
-//                               $subtract: [
-//                                 { $degreesToRadians: "$$lon2" },
-//                                 { $degreesToRadians: "$$lon1" },
-//                               ],
-//                             },
-//                           },
-//                         ],
-//                       },
-//                     ],
-//                   },
-//                 },
-//               ],
-//             },
-//           },
-//         },
-//       },
-//     });
-
-//     pipeline.push({
-//       $addFields: { distance: { $round: ["$distance", 2] } },
-//     });
-//     if (isValid(startDistance)) startDistance = parseInt(startDistance);
-//     else startDistance = 0;
-//     if (isValid(endDistance)) endDistance = parseInt(endDistance);
-//     else endDistance = 5;
-//     pipeline.push({
-//       $match: {
-//         distance: { $gte: startDistance, $lte: endDistance },
-//       },
-//     });
-//   }
-
-//   if (isValid(page)) {
-//     page = parseInt(page);
-//     let skip = (page - 1) * limit;
-//     pipeline.push({ $skip: skip });
-//     pipeline.push({ $limit: limit });
-//   }
+//   // Continue with your existing pipeline logic (rating, distance, pagination, etc.)
 
 //   const posts = await Post.aggregate(pipeline);
 
@@ -185,77 +120,6 @@ const recentPosts = async (user, query) => {
 //     data: posts,
 //   };
 // };
-
-const allPosts = async (user, query, body) => {
-  let {
-    startDistance,
-    endDistance,
-    rating,
-    topRated,
-    key,
-    categories,
-    myPost = false,
-    userId,
-    latitude,
-    longitude,
-  } = body;
-  let { page } = query;
-  let filter = { isDeleted: false };
-  let limit = 10;
-  
-  if (isValid(key)) {
-    filter.$or = [
-      { title: new RegExp(key, "i") },
-      { description: new RegExp(key, "i") },
-      { categories: new RegExp(key, "i") },
-    ];
-  }
-  
-  if (isValid(categories) && categories.length > 0)
-    filter.categories = { $in: categories };
-  
-  if (myPost == true) filter.userId = user._id;
-  else if (isValid(userId)) filter.userId = new mongoose.Types.ObjectId(userId);
-  
-  let documents = await Post.countDocuments(filter);
-
-  let pipeline = [
-    { $match: filter },
-    {
-      $lookup: {
-        from: "users", // Assuming the users collection is named "users"
-        localField: "userId",
-        foreignField: "_id",
-        as: "userData",
-      },
-    },
-    {
-      $unwind: {
-        path: "$userData",
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    {
-      $addFields: {
-        shopName: "$userData.shopName", // Add the shop name field
-        categories: "$userData.categories", // If the user has categories, you can add that too
-      },
-    },
-  ];
-
-  // Continue with your existing pipeline logic (rating, distance, pagination, etc.)
-
-  const posts = await Post.aggregate(pipeline);
-
-  return {
-    msg: msg.success,
-    count: posts.length,
-    currentPage: page,
-    totalPages: Math.ceil(documents / limit),
-    totalDocuments: documents,
-    data: posts,
-  };
-};
 
 // const allShop = async (user, query, body) => {
 //   let {
@@ -320,6 +184,173 @@ const allPosts = async (user, query, body) => {
 //     data: users, // Return the user data (with only shopName and businessAddress)
 //   };
 // };
+
+// const allPosts = async (user, query, body) => {
+//   let {
+//     startDistance,
+//     endDistance,
+//     rating,
+//     topRated,
+//     key,
+//     categories,
+//     myPost = false,
+//     userId,
+//     latitude,
+//     longitude,
+//   } = body;
+//   let { page } = query;
+//   let filter = { isDeleted: false };
+//   let limit = 10;
+
+//   if (isValid(key)) {
+//     filter.$or = [
+//       { title: new RegExp(key, "i") },
+//       { description: new RegExp(key, "i") },
+//       { categories: new RegExp(key, "i") },
+//     ];
+//   }
+
+//   if (isValid(categories) && categories.length > 0)
+//     filter.categories = { $in: categories };
+
+//   if (myPost == true) filter.userId = user._id;
+//   else if (isValid(userId)) filter.userId = new mongoose.Types.ObjectId(userId);
+
+//   let documents = await Post.countDocuments(filter);
+
+//   let pipeline = [
+//     { $match: filter },
+//     {
+//       $lookup: {
+//         from: "users", // Assuming the users collection is named "users"
+//         localField: "userId",
+//         foreignField: "_id",
+//         as: "userData",
+//       },
+//     },
+//     {
+//       $unwind: {
+//         path: "$userData",
+//         preserveNullAndEmptyArrays: true,
+//       },
+//     },
+//     {
+//       $addFields: {
+//         shopName: "$userData.shopName", // Add the shop name field
+//         categories: "$userData.categories", // If the user has categories, you can add that too
+//       },
+//     },
+//   ];
+
+//   // Fetch all posts with the pipeline
+//   const posts = await Post.aggregate(pipeline);
+
+//   // Fetch the average ratings for each post using getRating
+//   const postsWithRatings = await Promise.all(
+//     posts.map(async (post) => {
+//       // Assuming postId corresponds to the post._id
+//       try {
+//         // Call getRating function for each post to get its average rating and detailed ratings
+//         const ratingData = await getRating(user, { postId: post._id });
+
+//         return {
+//           ...post,
+//           averageRating: ratingData.averageRating, // Add average rating to the post object
+//           ratings: ratingData.rating, // Add all individual ratings if needed
+//         };
+//       } catch (error) {
+//         console.error(`Error fetching rating for post ${post._id}:`, error);
+//         return {
+//           ...post,
+//           averageRating: 0, // Default value if there's an error fetching rating
+//           ratings: [], // Default empty ratings if there's an error
+//         };
+//       }
+//     })
+//   );
+
+//   return {
+//     msg: "Success",
+//     count: postsWithRatings.length,
+//     currentPage: page,
+//     totalPages: Math.ceil(documents / limit),
+//     totalDocuments: documents,
+//     data: postsWithRatings,
+//   };
+// };
+
+const allPosts = async (user, query, body) => {
+  let {
+    startDistance,
+    endDistance,
+    rating,
+    topRated,
+    key,
+    categories,
+    myPost = false,
+    userId,
+    latitude,
+    longitude,
+  } = body;
+  let { page } = query;
+  let filter = { isDeleted: false }; // Ensuring only non-deleted posts
+  let limit = 10;
+  
+  if (isValid(key)) {
+    filter.$or = [
+      { title: new RegExp(key, "i") },
+      { description: new RegExp(key, "i") },
+      { categories: new RegExp(key, "i") },
+    ];
+  }
+  
+  if (isValid(categories) && categories.length > 0)
+    filter.categories = { $in: categories };
+  
+  if (myPost == true) filter.userId = user._id;
+  else if (isValid(userId)) filter.userId = new mongoose.Types.ObjectId(userId);
+  
+  let documents = await Post.countDocuments(filter);
+
+  let pipeline = [
+    { $match: filter },
+    {
+      $lookup: {
+        from: "users",
+        localField: "userId",
+        foreignField: "_id",
+        as: "userData",
+      },
+    },
+    {
+      $unwind: {
+        path: "$userData",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $match: { "userData.isDeleted": false }, // Exclude posts from deleted users
+    },
+    {
+      $addFields: {
+        shopName: "$userData.shopName",
+        categories: "$userData.categories",
+      },
+    },
+  ];
+
+  const posts = await Post.aggregate(pipeline);
+
+  return {
+    msg: msg.success,
+    count: posts.length,
+    currentPage: page,
+    totalPages: Math.ceil(documents / limit),
+    totalDocuments: documents,
+    data: posts,
+  };
+};
+
 
 const allShop = async (user, query, body) => {
   let {

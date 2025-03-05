@@ -15,20 +15,52 @@ const postRequirement = async (user, body) => {
   };
 };
 
-const getRequirement = async (user) => {
-  let filter = {
-    isDeleted: false,
-  };
+// const getRequirement = async (user, category) => {
+//   let filter = {
+//     isDeleted: false,
+//   };
+//   if (user.roleId == 0) filter.userId = user._id;
+  
+//   // Add category filter if provided
+//   if (category) {
+//     filter.categories = category;
+//   }
+
+//   const requirement = await RequirementPost.find(filter).sort({
+//     createdAt: -1,
+//   });
+//   return {
+//     msg: "Ok",
+//     count: requirement.length,
+//     data: requirement,
+//   };
+// };
+
+const getRequirement = async (user, category) => {
+  let filter = { isDeleted: false };
+
   if (user.roleId == 0) filter.userId = user._id;
+
+  // Add category filter if provided
+  if (category) filter.categories = category;
+
+  // Fetch user IDs where isDeleted is false
+  let activeUserIds = await User.find({ isDeleted: false }).distinct("_id");
+
+  // Ensure requirements only belong to non-deleted users
+  filter.userId = { $in: activeUserIds };
+
   const requirement = await RequirementPost.find(filter).sort({
     createdAt: -1,
   });
+
   return {
-    msg: msg.success,
+    msg: "Ok",
     count: requirement.length,
     data: requirement,
   };
 };
+
 
 const updateRequirement = async (user, query, body) => {
   if (!isValid(query.id)) throw "Invalid id passed";

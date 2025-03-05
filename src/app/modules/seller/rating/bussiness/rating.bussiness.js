@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const { msg } = require("../../../../../config/message");
 const { isValid } = require("../../../../middleware/validator.middleware");
 const { Rating } = require("../models/rating.model");
+const moment = require("moment"); 
 
 const rating = async (user, query, body) => {
   if (!isValid(query.postId)) throw "postId must be a valid";
@@ -178,12 +179,10 @@ const deleteRating = async (user, query) => {
 //   };
 // };
 
-const moment = require("moment"); // Install with: npm install moment
-
 const getRating = async (user, query) => {
   if (!isValid(query.postId)) throw "postId must be a valid";
 
-  // Aggregate ratings grouped by rate value
+  // Get rating count data (ratings per score)
   let rateData = await Rating.aggregate([
     {
       $match: { postId: new mongoose.Types.ObjectId(query.postId) },
@@ -219,6 +218,11 @@ const getRating = async (user, query) => {
     }
   });
 
+  // Calculate average rating for this postId
+  const totalRatings = rate.reduce((sum, item) => sum + item.rate * item.count, 0);
+  const totalCount = rate.reduce((sum, item) => sum + item.count, 0);
+  const averageRating = totalCount > 0 ? (totalRatings / totalCount).toFixed(2) : 0;
+
   // Fetch all individual ratings with user details and calculate "time ago"
   let ratings = await Rating.aggregate([
     {
@@ -248,7 +252,6 @@ const getRating = async (user, query) => {
         date: "$rating.date",
         feedback: "$rating.feedback",
         images: "$rating.images",
-
         likeByMe: {
           $in: [
             new mongoose.Types.ObjectId(user._id),
@@ -281,9 +284,11 @@ const getRating = async (user, query) => {
     msg: "Ok",
     postId: query.postId,
     result: rate,
+    averageRating,
     rating: ratings,
   };
 };
+
 
 const likeRating = async (user, query) => {
   if (!isValid(query.postId)) throw "postId must be a valid";
