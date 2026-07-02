@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-let { upload } = require("../../../util/s3");
+let { upload } = require("../../../util/storage");
 const { authenticate } = require("../../../middleware/jwt.middleware");
 const { wrapAsync } = require("../../../helpers/router.helper");
 

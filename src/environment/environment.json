@@ -1,17 +1,18 @@
 {
   "development": {
     "PORT": 8080,
-    "MONGODB_URI": "mongodb+srv://priyankakridemo93:c8cfRdrj8wcLog9U@cluster0.wwro7.mongodb.net/serviceApplication",
+    "MONGODB_URI": "mongodb+srv://kartikeykapoor25_db_user:eQcptWQFI4YbrFzV@cluster0.48kvlbl.mongodb.net/?appName=Cluster0",
     "secret_token": "secretOrPrivateKey",
     "crypto_secret_key": "secretOrPrivateKey",
     "limit": 20,
     "runUsingCluster": false,
-    "AccessKeyId": "AKIAVYV52A6AIRGYOE7U",
-    "SecretAccessKey": "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"
+      "cloud_name":"klyrnnvo",
+      "api_key":"989454241269282",
+      "api_secret":"CpJM24fJEkt0O7BGqRwwoqB2tzU"
   },
   "prod": {
     "PORT": 8080,
-    "MONGODB_URI": "mongodb+srv://priyankakridemo93:c8cfRdrj8wcLog9U@cluster0.wwro7.mongodb.net/serviceApplication",
+    "MONGODB_URI": "mongodb+srv://kartikeykapoor25_db_user:eQcptWQFI4YbrFzV@cluster0.48kvlbl.mongodb.net/?appName=Cluster0",
     "secret_token": "secretOrPrivateKey",
     "crypto_secret_key": "secretOrPrivateKey",
     "limit": 20,
