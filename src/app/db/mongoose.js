@@ -6,10 +6,7 @@ class Database {
 
     async db_connect() {
         try {
-            this.database = await mongoose.connect(process.env.MONGODB_URI, {
-                useNewUrlParser: true,
-                useUnifiedTopology: true
-            });
+            this.database = await mongoose.connect(process.env.MONGODB_URI);
             console.log("Database connection successful");
             mongoose.set('debug', true);
         } catch (err) {
