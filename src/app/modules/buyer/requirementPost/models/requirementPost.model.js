@@ -7,29 +7,61 @@ const RequirementPostSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+
+    productName: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 200,
+    },
+
     categories: [String],
+
     images: [String],
+
     description: {
       type: String,
-      maxlength: 1000, // Limit description length
+      maxlength: 1000,
     },
-    contactNumber: { type: String, trim: true },
-    contactEmail: { type: String, trim: true },
-    location: { type: String, trim: true },
-    locationUrl: { type: String, trim: true },
+
+    contactNumber: {
+      type: String,
+      trim: true,
+    },
+
+    contactEmail: {
+      type: String,
+      trim: true,
+    },
+
+    location: {
+      type: String,
+      trim: true,
+    },
+
+    locationUrl: {
+      type: String,
+      trim: true,
+    },
+
     latitude: {
-      // location latitude
       type: String,
       trim: true,
     },
+
     longitude: {
-      // location longitude
       type: String,
       trim: true,
     },
-    isDeleted: { type: Boolean, default: false },
+
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
 let RequirementPost = mongoose.model("Requirementpost", RequirementPostSchema);

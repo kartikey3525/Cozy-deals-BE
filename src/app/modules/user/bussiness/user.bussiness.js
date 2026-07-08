@@ -230,23 +230,36 @@ const updateProfile = async (user, body) => {
   Object.keys(body).forEach((key) => {
     if (!isValid(body[key])) delete body[key];
   });
-  if (isValid(body.email) ) {
-    // || isValid(body.phone)
-    let existingUser = await User.findOne({
-      $or: [{ email: body.email }],
+
+  // Email validation
+  if (isValid(body.email)) {
+    const existingUser = await User.findOne({
+      email: body.email,
       _id: { $ne: user._id },
       isDeleted: false,
     });
-    if (existingUser) throw "email or phone already";
+
+    if (existingUser) {
+      throw "email already exists";
+    }
   }
-  let user1 = await User.findOneAndUpdate(
+
+  // Update user
+  const updatedUser = await User.findOneAndUpdate(
     { _id: user._id, isDeleted: false },
     { $set: body },
-    { new: true }
+    {
+      new: true,
+      runValidators: true,
+    }
   );
 
-  if (body.categoriesPost && body.categoriesPost.length > 0) {
-    let data2 = await createManyPost(user, body.categoriesPost);
+  // Create seller products
+  if (
+    Array.isArray(body.categoriesPost) &&
+    body.categoriesPost.length > 0
+  ) {
+    await createManyPost(user, body.categoriesPost);
   }
 
   return {

@@ -104,11 +104,7 @@ const UserSchema = new mongoose.Schema(
     isOnline: {
       type: Boolean,
       default: false,
-    },
-    description:{
-      type: String,
-      maxlength: 1000, // Limit description length
-    },  // Indicates if the user is currently online
+    }, 
     socketId: {
       type: String,
       trim: true,
@@ -137,7 +133,19 @@ const UserSchema = new mongoose.Schema(
     isDeliveryAvailable: {
       type: Boolean,
       default: false,
+    },gstin: {
+      type: String,
+      trim: true,
     },
+    
+    establishmentYear: {
+      type: Number,
+    },
+    
+    selectedCategories: [{
+      type: String,
+      trim: true,
+    }],
     currentShopLocationUrl: {
       type: String,
       trim: true,
@@ -159,7 +167,8 @@ const UserSchema = new mongoose.Schema(
     },
     contactNumber: { type: String, trim: true },
     contactEmail: { type: String, trim: true },
-    description: { type: String, trim: true },
+    description: { type: String, trim: true ,    maxlength: 1000,
+    },
     facebookUrl: { type: String, trim: true },
     instagramUrl: { type: String, trim: true },
     youtubeUrl: { type: String, trim: true },

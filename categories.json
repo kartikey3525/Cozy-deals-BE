@@ -1,0 +1,1162 @@
+[
+  {
+    "index": "1",
+    "name": "Electronics",
+    "image": "https://picsum.photos/400?random=1",
+    "subCategories": [
+      {
+        "index": "1",
+        "name": "Mobile Phones",
+        "image": "https://picsum.photos/200?random=101"
+      },
+      {
+        "index": "2",
+        "name": "Smartphones",
+        "image": "https://picsum.photos/200?random=102"
+      },
+      {
+        "index": "3",
+        "name": "Feature Phones",
+        "image": "https://picsum.photos/200?random=103"
+      },
+      {
+        "index": "4",
+        "name": "Laptops",
+        "image": "https://picsum.photos/200?random=104"
+      },
+      {
+        "index": "5",
+        "name": "Desktops",
+        "image": "https://picsum.photos/200?random=105"
+      },
+      {
+        "index": "6",
+        "name": "Tablets",
+        "image": "https://picsum.photos/200?random=106"
+      },
+      {
+        "index": "7",
+        "name": "Smart Watches",
+        "image": "https://picsum.photos/200?random=107"
+      },
+      {
+        "index": "8",
+        "name": "Headphones",
+        "image": "https://picsum.photos/200?random=108"
+      },
+      {
+        "index": "9",
+        "name": "Earbuds",
+        "image": "https://picsum.photos/200?random=109"
+      },
+      {
+        "index": "10",
+        "name": "Bluetooth Speakers",
+        "image": "https://picsum.photos/200?random=110"
+      },
+      {
+        "index": "11",
+        "name": "Power Banks",
+        "image": "https://picsum.photos/200?random=111"
+      },
+      {
+        "index": "12",
+        "name": "Chargers",
+        "image": "https://picsum.photos/200?random=112"
+      },
+      {
+        "index": "13",
+        "name": "Data Cables",
+        "image": "https://picsum.photos/200?random=113"
+      },
+      {
+        "index": "14",
+        "name": "Memory Cards",
+        "image": "https://picsum.photos/200?random=114"
+      },
+      {
+        "index": "15",
+        "name": "Computer Accessories",
+        "image": "https://picsum.photos/200?random=115"
+      }
+    ]
+  },
+  {
+    "index": "2",
+    "name": "Fashion",
+    "image": "https://picsum.photos/400?random=2",
+    "subCategories": [
+      {
+        "index": "1",
+        "name": "Men",
+        "image": "https://picsum.photos/200?random=201"
+      },
+      {
+        "index": "2",
+        "name": "Women",
+        "image": "https://picsum.photos/200?random=202"
+      },
+      {
+        "index": "3",
+        "name": "Kids",
+        "image": "https://picsum.photos/200?random=203"
+      },
+      {
+        "index": "4",
+        "name": "T-Shirts",
+        "image": "https://picsum.photos/200?random=204"
+      },
+      {
+        "index": "5",
+        "name": "Shirts",
+        "image": "https://picsum.photos/200?random=205"
+      },
+      {
+        "index": "6",
+        "name": "Jeans",
+        "image": "https://picsum.photos/200?random=206"
+      },
+      {
+        "index": "7",
+        "name": "Trousers",
+        "image": "https://picsum.photos/200?random=207"
+      },
+      {
+        "index": "8",
+        "name": "Jackets",
+        "image": "https://picsum.photos/200?random=208"
+      },
+      {
+        "index": "9",
+        "name": "Hoodies",
+        "image": "https://picsum.photos/200?random=209"
+      },
+      {
+        "index": "10",
+        "name": "Sweaters",
+        "image": "https://picsum.photos/200?random=210"
+      },
+      {
+        "index": "11",
+        "name": "Ethnic Wear",
+        "image": "https://picsum.photos/200?random=211"
+      },
+      {
+        "index": "12",
+        "name": "Sarees",
+        "image": "https://picsum.photos/200?random=212"
+      },
+      {
+        "index": "13",
+        "name": "Kurtas",
+        "image": "https://picsum.photos/200?random=213"
+      },
+      {
+        "index": "14",
+        "name": "Footwear",
+        "image": "https://picsum.photos/200?random=214"
+      },
+      {
+        "index": "15",
+        "name": "Watches",
+        "image": "https://picsum.photos/200?random=215"
+      }
+    ]
+  },
+  {
+    "index": "3",
+    "name": "Groceries",
+    "image": "https://picsum.photos/400?random=3",
+    "subCategories": [
+      {
+        "index": "1",
+        "name": "Fruits",
+        "image": "https://picsum.photos/200?random=301"
+      },
+      {
+        "index": "2",
+        "name": "Vegetables",
+        "image": "https://picsum.photos/200?random=302"
+      },
+      {
+        "index": "3",
+        "name": "Rice",
+        "image": "https://picsum.photos/200?random=303"
+      },
+      {
+        "index": "4",
+        "name": "Atta",
+        "image": "https://picsum.photos/200?random=304"
+      },
+      {
+        "index": "5",
+        "name": "Pulses",
+        "image": "https://picsum.photos/200?random=305"
+      },
+      {
+        "index": "6",
+        "name": "Oil",
+        "image": "https://picsum.photos/200?random=306"
+      },
+      {
+        "index": "7",
+        "name": "Spices",
+        "image": "https://picsum.photos/200?random=307"
+      },
+      {
+        "index": "8",
+        "name": "Tea",
+        "image": "https://picsum.photos/200?random=308"
+      },
+      {
+        "index": "9",
+        "name": "Coffee",
+        "image": "https://picsum.photos/200?random=309"
+      },
+      {
+        "index": "10",
+        "name": "Snacks",
+        "image": "https://picsum.photos/200?random=310"
+      },
+      {
+        "index": "11",
+        "name": "Dairy",
+        "image": "https://picsum.photos/200?random=311"
+      },
+      {
+        "index": "12",
+        "name": "Frozen Food",
+        "image": "https://picsum.photos/200?random=312"
+      },
+      {
+        "index": "13",
+        "name": "Beverages",
+        "image": "https://picsum.photos/200?random=313"
+      },
+      {
+        "index": "14",
+        "name": "Bakery",
+        "image": "https://picsum.photos/200?random=314"
+      },
+      {
+        "index": "15",
+        "name": "Dry Fruits",
+        "image": "https://picsum.photos/200?random=315"
+      }
+    ]
+  },
+  {
+    "index": "4",
+    "name": "Furniture",
+    "image": "https://picsum.photos/400?random=4",
+    "subCategories": [
+      {
+        "index": "1",
+        "name": "Sofas",
+        "image": "https://picsum.photos/200?random=401"
+      },
+      {
+        "index": "2",
+        "name": "Beds",
+        "image": "https://picsum.photos/200?random=402"
+      },
+      {
+        "index": "3",
+        "name": "Dining Tables",
+        "image": "https://picsum.photos/200?random=403"
+      },
+      {
+        "index": "4",
+        "name": "Chairs",
+        "image": "https://picsum.photos/200?random=404"
+      },
+      {
+        "index": "5",
+        "name": "Wardrobes",
+        "image": "https://picsum.photos/200?random=405"
+      },
+      {
+        "index": "6",
+        "name": "Office Furniture",
+        "image": "https://picsum.photos/200?random=406"
+      },
+      {
+        "index": "7",
+        "name": "TV Units",
+        "image": "https://picsum.photos/200?random=407"
+      },
+      {
+        "index": "8",
+        "name": "Study Tables",
+        "image": "https://picsum.photos/200?random=408"
+      },
+      {
+        "index": "9",
+        "name": "Bookshelves",
+        "image": "https://picsum.photos/200?random=409"
+      },
+      {
+        "index": "10",
+        "name": "Mattresses",
+        "image": "https://picsum.photos/200?random=410"
+      }
+    ]
+  },
+  {
+    "index": "5",
+    "name": "Food",
+    "image": "https://picsum.photos/400?random=5",
+    "subCategories": [
+      {
+        "index": "1",
+        "name": "Restaurants",
+        "image": "https://picsum.photos/200?random=501"
+      },
+      {
+        "index": "2",
+        "name": "Fast Food",
+        "image": "https://picsum.photos/200?random=502"
+      },
+      {
+        "index": "3",
+        "name": "North Indian",
+        "image": "https://picsum.photos/200?random=503"
+      },
+      {
+        "index": "4",
+        "name": "South Indian",
+        "image": "https://picsum.photos/200?random=504"
+      },
+      {
+        "index": "5",
+        "name": "Chinese",
+        "image": "https://picsum.photos/200?random=505"
+      },
+      {
+        "index": "6",
+        "name": "Pizza",
+        "image": "https://picsum.photos/200?random=506"
+      },
+      {
+        "index": "7",
+        "name": "Burger",
+        "image": "https://picsum.photos/200?random=507"
+      },
+      {
+        "index": "8",
+        "name": "Cafe",
+        "image": "https://picsum.photos/200?random=508"
+      },
+      {
+        "index": "9",
+        "name": "Bakery",
+        "image": "https://picsum.photos/200?random=509"
+      },
+      {
+        "index": "10",
+        "name": "Sweets",
+        "image": "https://picsum.photos/200?random=510"
+      },
+      {
+        "index": "11",
+        "name": "Street Food",
+        "image": "https://picsum.photos/200?random=511"
+      },
+      {
+        "index": "12",
+        "name": "Juices",
+        "image": "https://picsum.photos/200?random=512"
+      }
+    ]
+  },
+  {
+    "index": "6",
+    "name": "Hospital",
+    "image": "https://picsum.photos/400?random=6",
+    "subCategories": [
+      {
+        "index": "1",
+        "name": "General Physician",
+        "image": "https://picsum.photos/200?random=601"
+      },
+      {
+        "index": "2",
+        "name": "Dentist",
+        "image": "https://picsum.photos/200?random=602"
+      },
+      {
+        "index": "3",
+        "name": "Orthopedic",
+        "image": "https://picsum.photos/200?random=603"
+      },
+      {
+        "index": "4",
+        "name": "Cardiologist",
+        "image": "https://picsum.photos/200?random=604"
+      },
+      {
+        "index": "5",
+        "name": "Pediatrician",
+        "image": "https://picsum.photos/200?random=605"
+      },
+      {
+        "index": "6",
+        "name": "Dermatologist",
+        "image": "https://picsum.photos/200?random=606"
+      },
+      {
+        "index": "7",
+        "name": "Gynecologist",
+        "image": "https://picsum.photos/200?random=607"
+      },
+      {
+        "index": "8",
+        "name": "ENT",
+        "image": "https://picsum.photos/200?random=608"
+      },
+      {
+        "index": "9",
+        "name": "Eye Specialist",
+        "image": "https://picsum.photos/200?random=609"
+      },
+      {
+        "index": "10",
+        "name": "Diagnostic Center",
+        "image": "https://picsum.photos/200?random=610"
+      }
+    ]
+  },
+  {
+    "index": "7",
+    "name": "Home Service",
+    "image": "https://picsum.photos/400?random=7",
+    "subCategories": [
+      {
+        "index": "1",
+        "name": "Electrician",
+        "image": "https://picsum.photos/200?random=701"
+      },
+      {
+        "index": "2",
+        "name": "Plumber",
+        "image": "https://picsum.photos/200?random=702"
+      },
+      {
+        "index": "3",
+        "name": "Carpenter",
+        "image": "https://picsum.photos/200?random=703"
+      },
+      {
+        "index": "4",
+        "name": "Painter",
+        "image": "https://picsum.photos/200?random=704"
+      },
+      {
+        "index": "5",
+        "name": "AC Repair",
+        "image": "https://picsum.photos/200?random=705"
+      },
+      {
+        "index": "6",
+        "name": "Appliance Repair",
+        "image": "https://picsum.photos/200?random=706"
+      },
+      {
+        "index": "7",
+        "name": "House Cleaning",
+        "image": "https://picsum.photos/200?random=707"
+      },
+      {
+        "index": "8",
+        "name": "Pest Control",
+        "image": "https://picsum.photos/200?random=708"
+      },
+      {
+        "index": "9",
+        "name": "Packers & Movers",
+        "image": "https://picsum.photos/200?random=709"
+      },
+      {
+        "index": "10",
+        "name": "Interior Designer",
+        "image": "https://picsum.photos/200?random=710"
+      }
+    ]
+  },
+  {
+    "index": "8",
+    "name": "Jewellery",
+    "image": "https://picsum.photos/400?random=8",
+    "subCategories": [
+      {
+        "index": "1",
+        "name": "Gold",
+        "image": "https://picsum.photos/200?random=801"
+      },
+      {
+        "index": "2",
+        "name": "Silver",
+        "image": "https://picsum.photos/200?random=802"
+      },
+      {
+        "index": "3",
+        "name": "Diamond",
+        "image": "https://picsum.photos/200?random=803"
+      },
+      {
+        "index": "4",
+        "name": "Artificial Jewellery",
+        "image": "https://picsum.photos/200?random=804"
+      },
+      {
+        "index": "5",
+        "name": "Rings",
+        "image": "https://picsum.photos/200?random=805"
+      },
+      {
+        "index": "6",
+        "name": "Necklaces",
+        "image": "https://picsum.photos/200?random=806"
+      },
+      {
+        "index": "7",
+        "name": "Bracelets",
+        "image": "https://picsum.photos/200?random=807"
+      },
+      {
+        "index": "8",
+        "name": "Earrings",
+        "image": "https://picsum.photos/200?random=808"
+      },
+      {
+        "index": "9",
+        "name": "Anklets",
+        "image": "https://picsum.photos/200?random=809"
+      },
+      {
+        "index": "10",
+        "name": "Mangalsutra",
+        "image": "https://picsum.photos/200?random=810"
+      }
+    ]
+  },
+  {
+    "index": "9",
+    "name": "Books & Stationery",
+    "image": "https://picsum.photos/400?random=9",
+    "subCategories": [
+      {
+        "index": "1",
+        "name": "School Books",
+        "image": "https://picsum.photos/200?random=901"
+      },
+      {
+        "index": "2",
+        "name": "College Books",
+        "image": "https://picsum.photos/200?random=902"
+      },
+      {
+        "index": "3",
+        "name": "Competitive Exams",
+        "image": "https://picsum.photos/200?random=903"
+      },
+      {
+        "index": "4",
+        "name": "Notebooks",
+        "image": "https://picsum.photos/200?random=904"
+      },
+      {
+        "index": "5",
+        "name": "Pens",
+        "image": "https://picsum.photos/200?random=905"
+      },
+      {
+        "index": "6",
+        "name": "Art Supplies",
+        "image": "https://picsum.photos/200?random=906"
+      },
+      {
+        "index": "7",
+        "name": "Office Supplies",
+        "image": "https://picsum.photos/200?random=907"
+      },
+      {
+        "index": "8",
+        "name": "Files",
+        "image": "https://picsum.photos/200?random=908"
+      },
+      {
+        "index": "9",
+        "name": "Calculators",
+        "image": "https://picsum.photos/200?random=909"
+      },
+      {
+        "index": "10",
+        "name": "Printers",
+        "image": "https://picsum.photos/200?random=910"
+      }
+    ]
+  },
+  {
+    "index": "10",
+    "name": "Photographer",
+    "image": "https://picsum.photos/400?random=10",
+    "subCategories": [
+      {
+        "index": "1",
+        "name": "Wedding",
+        "image": "https://picsum.photos/200?random=1001"
+      },
+      {
+        "index": "2",
+        "name": "Pre Wedding",
+        "image": "https://picsum.photos/200?random=1002"
+      },
+      {
+        "index": "3",
+        "name": "Birthday",
+        "image": "https://picsum.photos/200?random=1003"
+      },
+      {
+        "index": "4",
+        "name": "Event",
+        "image": "https://picsum.photos/200?random=1004"
+      },
+      {
+        "index": "5",
+        "name": "Product",
+        "image": "https://picsum.photos/200?random=1005"
+      },
+      {
+        "index": "6",
+        "name": "Fashion",
+        "image": "https://picsum.photos/200?random=1006"
+      },
+      {
+        "index": "7",
+        "name": "Portrait",
+        "image": "https://picsum.photos/200?random=1007"
+      },
+      {
+        "index": "8",
+        "name": "Drone",
+        "image": "https://picsum.photos/200?random=1008"
+      },
+      {
+        "index": "9",
+        "name": "Cinematography",
+        "image": "https://picsum.photos/200?random=1009"
+      },
+      {
+        "index": "10",
+        "name": "Photo Studio",
+        "image": "https://picsum.photos/200?random=1010"
+      }
+    ]
+  },
+  {
+    "index": "11",
+    "name": "Music Instruments",
+    "image": "https://picsum.photos/400?random=11",
+    "subCategories": [
+      {
+        "index": "1",
+        "name": "Guitar",
+        "image": "https://picsum.photos/200?random=1101"
+      },
+      {
+        "index": "2",
+        "name": "Keyboard",
+        "image": "https://picsum.photos/200?random=1102"
+      },
+      {
+        "index": "3",
+        "name": "Piano",
+        "image": "https://picsum.photos/200?random=1103"
+      },
+      {
+        "index": "4",
+        "name": "Drums",
+        "image": "https://picsum.photos/200?random=1104"
+      },
+      {
+        "index": "5",
+        "name": "Violin",
+        "image": "https://picsum.photos/200?random=1105"
+      },
+      {
+        "index": "6",
+        "name": "Flute",
+        "image": "https://picsum.photos/200?random=1106"
+      },
+      {
+        "index": "7",
+        "name": "Tabla",
+        "image": "https://picsum.photos/200?random=1107"
+      },
+      {
+        "index": "8",
+        "name": "Harmonium",
+        "image": "https://picsum.photos/200?random=1108"
+      },
+      {
+        "index": "9",
+        "name": "Microphones",
+        "image": "https://picsum.photos/200?random=1109"
+      },
+      {
+        "index": "10",
+        "name": "DJ Equipment",
+        "image": "https://picsum.photos/200?random=1110"
+      }
+    ]
+  },
+  {
+    "index": "12",
+    "name": "Sports & Fitness",
+    "image": "https://picsum.photos/400?random=12",
+    "subCategories": [
+      {
+        "index": "1",
+        "name": "Gym",
+        "image": "https://picsum.photos/200?random=1201"
+      },
+      {
+        "index": "2",
+        "name": "Yoga",
+        "image": "https://picsum.photos/200?random=1202"
+      },
+      {
+        "index": "3",
+        "name": "Cricket",
+        "image": "https://picsum.photos/200?random=1203"
+      },
+      {
+        "index": "4",
+        "name": "Football",
+        "image": "https://picsum.photos/200?random=1204"
+      },
+      {
+        "index": "5",
+        "name": "Badminton",
+        "image": "https://picsum.photos/200?random=1205"
+      },
+      {
+        "index": "6",
+        "name": "Cycling",
+        "image": "https://picsum.photos/200?random=1206"
+      },
+      {
+        "index": "7",
+        "name": "Running",
+        "image": "https://picsum.photos/200?random=1207"
+      },
+      {
+        "index": "8",
+        "name": "Swimming",
+        "image": "https://picsum.photos/200?random=1208"
+      },
+      {
+        "index": "9",
+        "name": "Supplements",
+        "image": "https://picsum.photos/200?random=1209"
+      },
+      {
+        "index": "10",
+        "name": "Sports Wear",
+        "image": "https://picsum.photos/200?random=1210"
+      }
+    ]
+  },
+  {
+    "index": "13",
+    "name": "Automotive",
+    "image": "https://picsum.photos/400?random=13",
+    "subCategories": [
+      {
+        "index": "1",
+        "name": "Cars",
+        "image": "https://picsum.photos/200?random=1301"
+      },
+      {
+        "index": "2",
+        "name": "Bikes",
+        "image": "https://picsum.photos/200?random=1302"
+      },
+      {
+        "index": "3",
+        "name": "Scooters",
+        "image": "https://picsum.photos/200?random=1303"
+      },
+      {
+        "index": "4",
+        "name": "Car Accessories",
+        "image": "https://picsum.photos/200?random=1304"
+      },
+      {
+        "index": "5",
+        "name": "Bike Accessories",
+        "image": "https://picsum.photos/200?random=1305"
+      },
+      {
+        "index": "6",
+        "name": "Tyres",
+        "image": "https://picsum.photos/200?random=1306"
+      },
+      {
+        "index": "7",
+        "name": "Car Wash",
+        "image": "https://picsum.photos/200?random=1307"
+      },
+      {
+        "index": "8",
+        "name": "Service Center",
+        "image": "https://picsum.photos/200?random=1308"
+      },
+      {
+        "index": "9",
+        "name": "Battery",
+        "image": "https://picsum.photos/200?random=1309"
+      },
+      {
+        "index": "10",
+        "name": "Spare Parts",
+        "image": "https://picsum.photos/200?random=1310"
+      }
+    ]
+  },
+  {
+    "index": "14",
+    "name": "Beauty & Salon",
+    "image": "https://picsum.photos/400?random=14",
+    "subCategories": [
+      {
+        "index": "1",
+        "name": "Men Salon",
+        "image": "https://picsum.photos/200?random=1401"
+      },
+      {
+        "index": "2",
+        "name": "Women Salon",
+        "image": "https://picsum.photos/200?random=1402"
+      },
+      {
+        "index": "3",
+        "name": "Spa",
+        "image": "https://picsum.photos/200?random=1403"
+      },
+      {
+        "index": "4",
+        "name": "Makeup Artist",
+        "image": "https://picsum.photos/200?random=1404"
+      },
+      {
+        "index": "5",
+        "name": "Nail Studio",
+        "image": "https://picsum.photos/200?random=1405"
+      },
+      {
+        "index": "6",
+        "name": "Hair Treatment",
+        "image": "https://picsum.photos/200?random=1406"
+      },
+      {
+        "index": "7",
+        "name": "Skin Care",
+        "image": "https://picsum.photos/200?random=1407"
+      },
+      {
+        "index": "8",
+        "name": "Massage",
+        "image": "https://picsum.photos/200?random=1408"
+      },
+      {
+        "index": "9",
+        "name": "Tattoo",
+        "image": "https://picsum.photos/200?random=1409"
+      },
+      {
+        "index": "10",
+        "name": "Bridal Makeup",
+        "image": "https://picsum.photos/200?random=1410"
+      }
+    ]
+  },
+  {
+    "index": "15",
+    "name": "Pets",
+    "image": "https://picsum.photos/400?random=15",
+    "subCategories": [
+      {
+        "index": "1",
+        "name": "Dog Food",
+        "image": "https://picsum.photos/200?random=1501"
+      },
+      {
+        "index": "2",
+        "name": "Cat Food",
+        "image": "https://picsum.photos/200?random=1502"
+      },
+      {
+        "index": "3",
+        "name": "Pet Grooming",
+        "image": "https://picsum.photos/200?random=1503"
+      },
+      {
+        "index": "4",
+        "name": "Veterinary",
+        "image": "https://picsum.photos/200?random=1504"
+      },
+      {
+        "index": "5",
+        "name": "Pet Toys",
+        "image": "https://picsum.photos/200?random=1505"
+      },
+      {
+        "index": "6",
+        "name": "Aquarium",
+        "image": "https://picsum.photos/200?random=1506"
+      },
+      {
+        "index": "7",
+        "name": "Birds",
+        "image": "https://picsum.photos/200?random=1507"
+      },
+      {
+        "index": "8",
+        "name": "Pet Accessories",
+        "image": "https://picsum.photos/200?random=1508"
+      }
+    ]
+  },
+  {
+    "index": "16",
+    "name": "Real Estate",
+    "image": "https://picsum.photos/400?random=16",
+    "subCategories": [
+      {
+        "index": "1",
+        "name": "Apartments",
+        "image": "https://picsum.photos/200?random=1601"
+      },
+      {
+        "index": "2",
+        "name": "Plots",
+        "image": "https://picsum.photos/200?random=1602"
+      },
+      {
+        "index": "3",
+        "name": "Commercial",
+        "image": "https://picsum.photos/200?random=1603"
+      },
+      {
+        "index": "4",
+        "name": "Rental",
+        "image": "https://picsum.photos/200?random=1604"
+      },
+      {
+        "index": "5",
+        "name": "PG",
+        "image": "https://picsum.photos/200?random=1605"
+      },
+      {
+        "index": "6",
+        "name": "Farm House",
+        "image": "https://picsum.photos/200?random=1606"
+      },
+      {
+        "index": "7",
+        "name": "Warehouse",
+        "image": "https://picsum.photos/200?random=1607"
+      },
+      {
+        "index": "8",
+        "name": "Office Space",
+        "image": "https://picsum.photos/200?random=1608"
+      }
+    ]
+  },
+  {
+    "index": "17",
+    "name": "Education",
+    "image": "https://picsum.photos/400?random=17",
+    "subCategories": [
+      {
+        "index": "1",
+        "name": "Schools",
+        "image": "https://picsum.photos/200?random=1701"
+      },
+      {
+        "index": "2",
+        "name": "Colleges",
+        "image": "https://picsum.photos/200?random=1702"
+      },
+      {
+        "index": "3",
+        "name": "Coaching",
+        "image": "https://picsum.photos/200?random=1703"
+      },
+      {
+        "index": "4",
+        "name": "Online Courses",
+        "image": "https://picsum.photos/200?random=1704"
+      },
+      {
+        "index": "5",
+        "name": "Computer Training",
+        "image": "https://picsum.photos/200?random=1705"
+      },
+      {
+        "index": "6",
+        "name": "Language Classes",
+        "image": "https://picsum.photos/200?random=1706"
+      },
+      {
+        "index": "7",
+        "name": "Music Classes",
+        "image": "https://picsum.photos/200?random=1707"
+      },
+      {
+        "index": "8",
+        "name": "Dance Classes",
+        "image": "https://picsum.photos/200?random=1708"
+      }
+    ]
+  },
+  {
+    "index": "18",
+    "name": "Travel",
+    "image": "https://picsum.photos/400?random=18",
+    "subCategories": [
+      {
+        "index": "1",
+        "name": "Hotels",
+        "image": "https://picsum.photos/200?random=1801"
+      },
+      {
+        "index": "2",
+        "name": "Resorts",
+        "image": "https://picsum.photos/200?random=1802"
+      },
+      {
+        "index": "3",
+        "name": "Tour Packages",
+        "image": "https://picsum.photos/200?random=1803"
+      },
+      {
+        "index": "4",
+        "name": "Flights",
+        "image": "https://picsum.photos/200?random=1804"
+      },
+      {
+        "index": "5",
+        "name": "Bus Booking",
+        "image": "https://picsum.photos/200?random=1805"
+      },
+      {
+        "index": "6",
+        "name": "Taxi",
+        "image": "https://picsum.photos/200?random=1806"
+      },
+      {
+        "index": "7",
+        "name": "Visa",
+        "image": "https://picsum.photos/200?random=1807"
+      },
+      {
+        "index": "8",
+        "name": "Travel Insurance",
+        "image": "https://picsum.photos/200?random=1808"
+      }
+    ]
+  },
+  {
+    "index": "19",
+    "name": "Health",
+    "image": "https://picsum.photos/400?random=19",
+    "subCategories": [
+      {
+        "index": "1",
+        "name": "Pharmacy",
+        "image": "https://picsum.photos/200?random=1901"
+      },
+      {
+        "index": "2",
+        "name": "Medical Store",
+        "image": "https://picsum.photos/200?random=1902"
+      },
+      {
+        "index": "3",
+        "name": "Diagnostic Lab",
+        "image": "https://picsum.photos/200?random=1903"
+      },
+      {
+        "index": "4",
+        "name": "Physiotherapy",
+        "image": "https://picsum.photos/200?random=1904"
+      },
+      {
+        "index": "5",
+        "name": "Nutritionist",
+        "image": "https://picsum.photos/200?random=1905"
+      },
+      {
+        "index": "6",
+        "name": "Psychologist",
+        "image": "https://picsum.photos/200?random=1906"
+      },
+      {
+        "index": "7",
+        "name": "Home Healthcare",
+        "image": "https://picsum.photos/200?random=1907"
+      }
+    ]
+  },
+  {
+    "index": "20",
+    "name": "Services",
+    "image": "https://picsum.photos/400?random=20",
+    "subCategories": [
+      {
+        "index": "1",
+        "name": "CA",
+        "image": "https://picsum.photos/200?random=2001"
+      },
+      {
+        "index": "2",
+        "name": "Lawyer",
+        "image": "https://picsum.photos/200?random=2002"
+      },
+      {
+        "index": "3",
+        "name": "Insurance",
+        "image": "https://picsum.photos/200?random=2003"
+      },
+      {
+        "index": "4",
+        "name": "Courier",
+        "image": "https://picsum.photos/200?random=2004"
+      },
+      {
+        "index": "5",
+        "name": "Printing",
+        "image": "https://picsum.photos/200?random=2005"
+      },
+      {
+        "index": "6",
+        "name": "Internet Provider",
+        "image": "https://picsum.photos/200?random=2006"
+      },
+      {
+        "index": "7",
+        "name": "Event Planner",
+        "image": "https://picsum.photos/200?random=2007"
+      },
+      {
+        "index": "8",
+        "name": "Security Services",
+        "image": "https://picsum.photos/200?random=2008"
+      }
+    ]
+  }
+]
