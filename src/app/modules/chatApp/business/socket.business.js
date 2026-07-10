@@ -21,7 +21,7 @@ function socketchatfunction(io) {
       try {
         await AuthSocket(socket, next); // Execute authentication middleware
       } catch (error) {
-        console.error("Socket middleware error:", err.message);
+        console.error("Socket middleware error:", error.message);
         socket.emit("error", { msg: error.message });
       }
     });
@@ -34,6 +34,21 @@ function socketchatfunction(io) {
         // handler for connecting sockets
         await connect(io, socket);
 
+        console.log("====================================");
+console.log("CHAT SOCKET CONNECTED");
+console.log("Socket ID:", socket.id);
+console.log("Namespace:", socket.nsp.name);
+console.log("User:", socket.user);
+console.log("====================================");
+
+// Log every socket event received
+socket.onAny((event, ...args) => {
+  console.log("====================================");
+  console.log("EVENT RECEIVED:", event);
+  console.log("Socket:", socket.id);
+  console.log("Payload:", JSON.stringify(args, null, 2));
+  console.log("====================================");
+});
         // Event handler for user list
         socket.on("userList", async (data) => {
           // data = {key: "search key"} optional

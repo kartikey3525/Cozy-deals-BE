@@ -14,7 +14,7 @@ function socketchatSupportfn(io) {
       try {
         await AuthSocket(socket, next); // Execute authentication middleware
       } catch (error) {
-        console.error("Socket middleware error:", err.message);
+        console.error("Socket middleware error:", error.message);
         socket.emit("error", { msg: error.message });
       }
     });
