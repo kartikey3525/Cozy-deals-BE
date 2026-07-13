@@ -93,15 +93,33 @@ socket.onAny((event, ...args) => {
         });
 
         // Event handler for open chat
-        socket.on("sendMsg", async (data) => {
-          // data = {"chatId": "678603c9676b7bd9de28d6d5", "msg": "Hello, how are you?", "msgType": "text", "thumbnail": ""}
+        socket.on("sendMsg", async (data, callback) => {
+
           try {
-            await sendMsg(io, socket, data);
-          } catch (error) {
-            console.error("Socket disconnection error:", error.message);
-            socket.emit("error", { msg: error.message });
+      
+              await sendMsg(io, socket, data);
+      
+              if (callback) {
+                  callback({
+                      success: true,
+                  });
+              }
+      
+          } catch (e) {
+      
+              if (callback) {
+                  callback({
+                      success: false,
+                      message: e.message,
+                  });
+              }
+      
+              socket.emit("error", {
+                  msg: e.message,
+              });
           }
-        });
+      
+      });
 
         // Event handler for typing
         socket.on("isTyping", async (data) => {

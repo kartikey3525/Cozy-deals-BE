@@ -219,7 +219,13 @@ const sendMsg = async (io, socket, data) => {
         msg: "chatId is required",
       });
     }
-    data.senderId = socket.user._id;
+    data.clientMessageId =
+    data.clientMessageId ||
+    `server_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  
+  data.senderId = socket.user._id;
+  
+  data.createdAt = new Date();
     data.readBy = [
       {
         userId: socket.user._id,
@@ -228,9 +234,25 @@ const sendMsg = async (io, socket, data) => {
     ];
     const chatmsg = await ChatApp.findOneAndUpdate(
       { chatId: data.chatId },
-      { $push: { message: data } },
-      { new: true }
-    ).populate("chatId", "user1 user2");
+      {
+          $push: {
+              message: data,
+          },
+      },
+      {
+          new: true,
+      },
+  ).populate("chatId", "user1 user2");
+  
+  const savedMessage =
+      chatmsg.message[chatmsg.message.length - 1];
+  
+  savedMessage.status = "sent";
+  
+  io.to(data.chatId).emit("receiveMsg", {
+      msg: msg.success,
+      data: savedMessage,
+  });
 
     const clientsInRoom = Array.from(io.adapter.rooms.get(data.chatId) || []);
     if (clientsInRoom.length > 1) {
@@ -269,8 +291,11 @@ const sendMsg = async (io, socket, data) => {
 
     io.to(data.chatId).emit("receiveMsg", {
       msg: msg.success,
-      data: data,
-    });
+      data: {
+          ...data,
+          status: "sent",
+      },
+  });
   } catch (error) {
     console.log(error.message);
     socket.emit("error", { msg: error.message });

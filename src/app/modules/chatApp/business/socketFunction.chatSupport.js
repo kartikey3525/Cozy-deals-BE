@@ -44,11 +44,23 @@ const sendMsg = async (io, socket, data) => {
       });
     }
     data.senderId = socket.user._id;
-    const chatmsg = await ChatSupport.updateOne(
-      { _id: data.id },
-      { $push: { message: data } },
-      { new: true }
-    );
+    const chatmsg = await ChatSupport.findByIdAndUpdate(
+      data.id,
+      {
+          $push:{
+              message:data
+          }
+      },
+      {
+          new:true
+      }
+  );
+  
+  const savedMessage =
+      chatmsg.message[chatmsg.message.length-1];
+  
+  savedMessage.status="sent";
+   
 
     io.to(data.id).emit("receiveMsg", {
       msg: msg.success,

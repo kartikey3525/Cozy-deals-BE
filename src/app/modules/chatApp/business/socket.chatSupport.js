@@ -36,15 +36,33 @@ function socketchatSupportfn(io) {
         });
 
         // Event handler for send msg
-        socket.on("sendMsg", async (data) => {
-          // data = {"id": "678603c9676b7bd9de28d6d5", "msg": "Hello, how are you?", "msgType": "text", "thumbnail": ""}
+        socket.on("sendMsg", async (data, callback) => {
+
           try {
-            await sendMsg(io, socket, data);
-          } catch (error) {
-            console.error("Socket disconnection error:", error.message);
-            socket.emit("error", { msg: error.message });
+      
+              await sendMsg(io, socket, data);
+      
+              if (callback) {
+                  callback({
+                      success: true,
+                  });
+              }
+      
+          } catch (e) {
+      
+              if (callback) {
+                  callback({
+                      success: false,
+                      message: e.message,
+                  });
+              }
+      
+              socket.emit("error", {
+                  msg: e.message,
+              });
           }
-        });
+      
+      });
 
         // Event handler for chat support list // this handler for admin only
         socket.on("chatSupportList", async (data) => {
