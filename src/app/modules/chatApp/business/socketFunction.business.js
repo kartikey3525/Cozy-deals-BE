@@ -1,3 +1,5 @@
+
+
 const { User } = require("../../user/models/user.model");
 const { ChatApp } = require("../models/chatApp.model");
 const { ChatContact } = require("../models/contact.model");
@@ -15,6 +17,11 @@ const connect = async (io, socket) => {
       { $set: { isOnline: true, socketId: socket.id } },
       { new: true }
     );
+
+    io.emit("userStatusChanged", {
+      userId: socket.user._id,
+      isOnline: true,
+    });
 
     //   // List all connected socket IDs
     // const connectedUsers = Array.from(io.sockets.keys());
@@ -81,8 +88,12 @@ const createChat = async (io, socket, data) => {
       let msg1 = await ChatApp.create({ chatId: chatmsg._id });
     }
 
-    let msgData = await msgDataFn(socket, chatmsg._id);
-    // leaving all room, before joining any room
+    let msgData =
+    await msgDataFn(
+        io,
+        socket,
+        chatmsg._id,
+    );    // leaving all room, before joining any room
     socket.rooms.forEach((roomId) => {
       if (roomId !== socket.id) {
         // Avoid leaving the default room with the socket's own ID
@@ -154,13 +165,43 @@ const chatList = async (io, socket, data) => {
         $unwind: "$chatWithUser",
       },
       {
+        $lookup: {
+          from: "chatmessages",
+          localField: "_id",
+          foreignField: "chatId",
+          as: "messages",
+        },
+      },
+      {
+        $addFields: {
+          messageDoc: {
+            $arrayElemAt: ["$messages", 0],
+          },
+        },
+      },
+      {
+        $addFields: {
+          lastMessage: {
+            $arrayElemAt: ["$messageDoc.message", -1],
+          },
+        },
+      },
+      {
         $project: {
           chatWithUser: 1,
           chatType: 1,
           isBlocked: 1,
+          lastMessage: 1,
+          updatedAt: "$messageDoc.updatedAt",
         },
       },
     ]);
+    list.sort((a, b) => {
+      return (
+        new Date(b.updatedAt || 0) -
+        new Date(a.updatedAt || 0)
+      );
+    });
     socket.emit("chatList", {
       msg: msg.success,
       count: list.length,
@@ -185,7 +226,11 @@ const openChat = async (io, socket, data) => {
     }
     const chatmsg = await ChatContact.findById(data.id);
 
-    let msgData = await msgDataFn(socket, chatmsg._id);
+    let msgData = await msgDataFn(
+      io,
+      socket,
+      chatmsg._id,
+  )
     // leaving all room, before joining any room
     socket.rooms.forEach((roomId) => {
       if (roomId !== socket.id) {
@@ -210,7 +255,7 @@ const openChat = async (io, socket, data) => {
 
 // =======================
 // Event handler for open chat
-const sendMsg = async (io, socket, data) => {
+const sendMsg = async (io, socket, data, callback) => {
   // data = {"chatId": "678603c9676b7bd9de28d6d5", "msg": "Hello, how are you?", "msgType": "text", "thumbnail": ""}
   try {
     // Check if id is provided in the data
@@ -226,77 +271,122 @@ const sendMsg = async (io, socket, data) => {
   data.senderId = socket.user._id;
   
   data.createdAt = new Date();
-    data.readBy = [
-      {
-        userId: socket.user._id,
-        status: "read",
-      },
-    ];
+    // data.readBy = [
+    //   {
+    //     userId: socket.user._id,
+    //     status: "read",
+    //   },
+    // ];
+    data.readBy = [];
     const chatmsg = await ChatApp.findOneAndUpdate(
       { chatId: data.chatId },
       {
-          $push: {
-              message: data,
-          },
+        $push: {
+          message: data,
+        },
+        $set: {
+          updatedAt: new Date(),
+        },
       },
       {
-          new: true,
-      },
-  ).populate("chatId", "user1 user2");
+        new: true,
+      }
+    ).populate("chatId", "user1 user2");
+    
+    if (!chatmsg) {
+      return socket.emit("error", {
+        msg: "Chat not found",
+      });
+    }
   
-  const savedMessage =
-      chatmsg.message[chatmsg.message.length - 1];
+    const savedMessage = {
+      ...chatmsg.message[
+          chatmsg.message.length - 1
+      ].toObject(),
   
-  savedMessage.status = "sent";
+      clientMessageId: data.clientMessageId,
+  
+      senderId: socket.user._id,
+  
+      createdAt:
+          chatmsg.message[
+              chatmsg.message.length - 1
+          ].createdAt ||
+          chatmsg.message[
+              chatmsg.message.length - 1
+          ].date,
+  
+      status: "sent",
+  };
   
   io.to(data.chatId).emit("receiveMsg", {
       msg: msg.success,
       data: savedMessage,
   });
 
-    const clientsInRoom = Array.from(io.adapter.rooms.get(data.chatId) || []);
-    if (clientsInRoom.length > 1) {
-      let chatWithUsers;
-      if (chatmsg.chatId.user1.toString() == socket.user._id.toString()) {
-        chatWithUsers = chatmsg.chatId.user2;
-      } else {
-        chatWithUsers = chatmsg.chatId.user1;
-      }
-      let socketId1 = await User.findById(chatWithUsers).select("socketId");
-      for (let i = 0; i < clientsInRoom.length - 1; i++) {
-        if (clientsInRoom[i] == socketId1.socketId) {
-          data.readBy.push({
-            userId: socketId1._id,
-            status: "read",
-          });
-          const chatmsg11 = await ChatApp.updateOne(
-            {
-              chatId: data.chatId,
-              "message.readBy.userId": { $ne: socketId1._id }, // Ensure userId is not already in readBy
-            },
-            {
-              $addToSet: { "message.$[].readBy": { userId: socketId1._id } },
-              // Add to readBy if userId does not already exist
-            },
-            { new: true }
-          );
-        }
-      }
-    }
-    console.log(
-      "Users in room:",
-      clientsInRoom,
-      "==========================================="
-    );
-
-    io.to(data.chatId).emit("receiveMsg", {
-      msg: msg.success,
-      data: {
-          ...data,
-          status: "sent",
-      },
+  io.to(data.chatId).emit("chatUpdated", {
+    chatId: data.chatId,
+    lastMessage: savedMessage,
   });
+
+  console.log(
+    "📨 Emitting Delivered:",
+    savedMessage.clientMessageId
+);
+
+  io.to(data.chatId).emit("messageDelivered", {
+    clientMessageId: savedMessage.clientMessageId,
+    status: "delivered",
+});
+
+  if (typeof callback === "function") {
+    callback({
+        success: true,
+        message: savedMessage,
+    });
+}
+    // const clientsInRoom = Array.from(io.adapter.rooms.get(data.chatId) || []);
+    // if (clientsInRoom.length > 1) {
+    //   let chatWithUsers;
+    //   if (chatmsg.chatId.user1.toString() == socket.user._id.toString()) {
+    //     chatWithUsers = chatmsg.chatId.user2;
+    //   } else {
+    //     chatWithUsers = chatmsg.chatId.user1;
+    //   }
+    //   let socketId1 = await User.findById(chatWithUsers).select("socketId");
+    //   for (let i = 0; i < clientsInRoom.length - 1; i++) {
+    //     if (clientsInRoom[i] == socketId1.socketId) {
+    //       data.readBy.push({
+    //         userId: socketId1._id,
+    //         status: "read",
+    //       });
+    //       const chatmsg11 = await ChatApp.updateOne(
+    //         {
+    //           chatId: data.chatId,
+    //           "message.readBy.userId": { $ne: socketId1._id }, // Ensure userId is not already in readBy
+    //         },
+    //         {
+    //           $addToSet: { "message.$[].readBy": { userId: socketId1._id } },
+    //           // Add to readBy if userId does not already exist
+    //         },
+    //         { new: true }
+    //       );
+    //     }
+    //   }
+    // }
+    // console.log(
+    //   "Users in room:",
+    //   clientsInRoom,
+    //   "==========================================="
+    // );
+
   } catch (error) {
+    if (typeof callback === "function") {
+      callback({
+          success: false,
+          message: error.message,
+      });
+  }
     console.log(error.message);
     socket.emit("error", { msg: error.message });
   }
@@ -433,6 +523,11 @@ const disconnect = async (io, socket) => {
       { $set: { isOnline: false, lastSeen: new Date() } },
       { new: true }
     );
+    io.emit("userStatusChanged", {
+      userId: socket.user._id,
+      isOnline: false,
+      lastSeen: new Date(),
+    });
     console.log("User disconnected", socket.id, "socket.id");
   } catch (error) {
     console.log(error.message);
@@ -442,18 +537,32 @@ const disconnect = async (io, socket) => {
 
 // ======================= function =================
 
-const msgDataFn = async (socket, chatId) => {
+const msgDataFn = async (
+  io,
+  socket,
+  chatId,
+) => {
   try {
-    const chatmsg = await ChatApp.updateOne(
+    await ChatApp.updateOne(
+      { chatId },
       {
-        chatId: chatId,
-        "message.readBy.userId": { $ne: socket.user._id }, // Ensure userId is not already in readBy
+        $addToSet: {
+          "message.$[msg].readBy": {
+            userId: socket.user._id,
+            status: "read",
+            date: new Date(),
+          },
+        },
       },
       {
-        $addToSet: { "message.$[].readBy": { userId: socket.user._id } },
-        // Add to readBy if userId does not already exist
-      },
-      { new: true }
+        arrayFilters: [
+          {
+            "msg.senderId": {
+              $ne: new mongoose.Types.ObjectId(socket.user._id),
+            },
+          },
+        ],
+      }
     );
 
     let data = await ChatApp.aggregate([
@@ -472,6 +581,10 @@ const msgDataFn = async (socket, chatId) => {
       },
       { $replaceRoot: { newRoot: "$message" } },
     ]);
+
+    io.to(chatId.toString()).emit("messageRead", {
+      userId: socket.user._id,
+    });
 
     return data;
   } catch (error) {
