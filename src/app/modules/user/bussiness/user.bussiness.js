@@ -170,7 +170,7 @@ const login = async (body) => {
         { phone: emailPhone },
         { email: emailPhone },
       ],
-      isDeleted: false,
+      isDeleted: false, 
       isVerified: true,
     },
     {
@@ -412,14 +412,15 @@ const getProfile = async (user) => {
 const getAllProfile = async () => {
 
   const users = await User.find({
-      roleId:1,
-      isDeleted:false
-  }).lean();
+    isDeleted: false,
+    isVerified: true,
+}).lean();
 
-  return {
-      msg:"success",
-      data:users
-  };
+return {
+    msg: "success",
+    data: users,
+};
+
 }
 
 const deleteProfile = async (user) => {
