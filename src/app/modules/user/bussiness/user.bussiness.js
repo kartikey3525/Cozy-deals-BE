@@ -158,7 +158,7 @@ const verifyOTP = async (body) => {
 };
 
 const login = async (body) => {
-  let { emailPhone, password, fcmToken } = body;
+  let { emailPhone, password, fcmToken ,roleId} = body;
 
   if (!isValid(emailPhone) || !isValid(password)) {
     throw "provide required fields";
@@ -169,14 +169,25 @@ const login = async (body) => {
       $or: [
         { phone: emailPhone },
         { email: emailPhone },
-        // { userName: emailPhone },
       ],
       isDeleted: false,
       isVerified: true,
     },
-    { $set: { fcmToken: fcmToken } },
-    { new: true }
+    {
+      $set: { fcmToken },
+    },
+    {
+      new: true,
+    }
   );
+  
+  if (!user) {
+    throw msg.userNotFound;
+  }
+  
+  if (user.roleId !== Number(roleId)) {
+    throw "Please login with the correct account type.";
+  }
   if (!user) throw msg.userNotFound;
   let decryptPassword = CryptoJS.AES.decrypt(
     user.password,
