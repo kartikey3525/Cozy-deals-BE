@@ -255,6 +255,23 @@ const updateProfile = async (user, body) => {
     }
   }
 
+  // =======================
+// Build seller location
+// =======================
+
+if (
+  body.latitude &&
+  body.longitude &&
+  body.businessAddress
+) {
+  body.location = {
+    latitude: Number(body.latitude),
+    longitude: Number(body.longitude),
+    city: body.city || "",
+    state: body.state || "",
+    pincode: body.pincode || "",
+  };
+}
   // Update user
   const updatedUser = await User.findOneAndUpdate(
     { _id: user._id, isDeleted: false },
@@ -448,7 +465,30 @@ const deactivateProfile = async (user) => {
 const userProfile = async (user, query) => {
   if (!isValid(query.id)) throw "user id is required";
   let user1 = await User.findById(query.id).select(
-    "name profile address latitude longitude roleId role isAdminVerified lastSeen isOnline shopName ownerName businessAddress businessScale isDeliveryAvailable currentShopLocationUrl contactNumber contactEmail description facebookUrl instagramUrl youtubeUrl websiteUrl"
+    `
+    name
+    profile
+    address
+    roleId
+    role
+    isAdminVerified
+    lastSeen
+    isOnline
+    shopName
+    ownerName
+    businessAddress
+    location
+    businessScale
+    isDeliveryAvailable
+    currentShopLocationUrl
+    contactNumber
+    contactEmail
+    description
+    facebookUrl
+    instagramUrl
+    youtubeUrl
+    websiteUrl
+    `
   );
   if (!user1) throw msg.userNotFound;
   return {

@@ -45,16 +45,7 @@ const UserSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    latitude: {
-      // location latitude
-      type: String,
-      trim: true,
-    },
-    longitude: {
-      // location longitude
-      type: String,
-      trim: true,
-    },
+   
     forgotPassword: {
       type: String,
       trim: true,
@@ -123,6 +114,28 @@ const UserSchema = new mongoose.Schema(
       // pinCode: { type: String, trim: true },
       // country: { type: String, trim: true },
     },
+    location: {
+      latitude: {
+          type: Number,
+          default: null,
+      },
+      longitude: {
+          type: Number,
+          default: null,
+      },
+      city: {
+          type: String,
+          trim: true,
+      },
+      state: {
+          type: String,
+          trim: true,
+      },
+      pincode: {
+          type: String,
+          trim: true,
+      },
+  },
     businessScale: {
       type: String,
       enum: ["small", "medium", "large"], //Small Business (Local)

@@ -339,6 +339,45 @@ const sendMsg = async (io, socket, data, callback) => {
     status: "delivered",
 });
 
+const clients = io.sockets.adapter.rooms.get(data.chatId);
+
+if (clients && clients.size >= 2) {
+  await ChatApp.updateOne(
+    {
+      chatId: data.chatId,
+      "message._id": savedMessage._id,
+    },
+    {
+      $addToSet: {
+        "message.$.readBy": {
+          userId: chatmsg.chatId.user1.equals(socket.user._id)
+            ? chatmsg.chatId.user2
+            : chatmsg.chatId.user1,
+          status: "read",
+          date: new Date(),
+        },
+      },
+    },
+  );
+
+  savedMessage.readBy = [
+    {
+      userId:
+        chatmsg.chatId.user1.equals(socket.user._id)
+          ? chatmsg.chatId.user2
+          : chatmsg.chatId.user1,
+      status: "read",
+      date: new Date(),
+    },
+  ];
+
+  io.to(data.chatId).emit("messageRead", {
+    messageId: savedMessage._id,
+    clientMessageId: savedMessage.clientMessageId,
+    readBy: savedMessage.readBy,
+  });
+}
+
   if (typeof callback === "function") {
     callback({
         success: true,
