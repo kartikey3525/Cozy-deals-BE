@@ -98,24 +98,27 @@ const deleteRequirement = async (user, query) => {
 //   }
 // }
 
+const {
+  notifi,
+} = require("../../pushNotification/business/pushNotification.business");
+
 const pushnotificationdemo = async (categories) => {
   try {
     const sellers = await User.find({
       roleId: 1,
-      category: { $in: categories },
-    }).select("fcmToken _id");
-    console.log(sellers);
-    const userData = sellers.map((seller) => ({
-      _id: seller._id,
-      fcmToken: seller.fcmToken,
-    }));
+      selectedCategories: { $in: categories }, // fixed field name
+    }).select("_id");
+
+    if (!sellers.length) return "No matching sellers found";
+
+    const ids = sellers.map(seller => seller._id);
     const title = "New Requirement Posted";
     const message =
       "A new requirement has been posted in the category you're interested in.";
-    const image = ""; // Add any image URL if needed
+    const image = "";
 
-    notifi1({ userData, title, message, image });
-    return "";
+    await notifi({ ids, title, message, image }); // correct function + shape
+    return "Notifications sent";
   } catch (error) {
     console.error("Error in pushnotificationdemo:", error.message);
     return error.message;

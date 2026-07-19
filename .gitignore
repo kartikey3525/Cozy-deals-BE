@@ -58,3 +58,5 @@ typings/
 # dotenv environment variables file
 
 .vscode/
+# Firebase Admin Service Account
+src/app/modules/buyer/pushNotification/business/serviceAccountKey.json

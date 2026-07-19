@@ -3,9 +3,19 @@ const admin = require("firebase-admin");
 // const {User}=  require ("../../../user/models/user.model")
 // Initialize Firebase Admin SDK
 admin.initializeApp({
-  credential: admin.credential.cert(require("./google-services.json")),
+  credential: admin.credential.cert(require("./serviceAccountKey.json")),
 });
 
+console.log("Firebase initialized successfully");
+admin.messaging().send({
+  token: 'f6_eZG5hRjSZdgxFRyxQ8R:APA91bEMAjasx1ELYYDmQXmjSeitIE7Qx6ey9VsKnE-XrXxZ8DagxXpJhyxk3wmZMVgRCD-xwC1Z171SL6YtYcPxDsiFVNJ9_BEDHhiQUjvsAQ5hE0N4EdM',
+  notification: { title: 'Test', body: 'Testing token validity' },
+}).then(res => {
+  console.log('SUCCESS:', res);
+}).catch(err => {
+  console.log('ERROR CODE:', err.code);
+  console.log('FULL ERROR:', err.message);
+});
 // const sendPushNotification = async (userIds, title, message, image) => {
 //   if (!Array.isArray(userIds)) {
 //     console.error("No valid user IDs provided!");
