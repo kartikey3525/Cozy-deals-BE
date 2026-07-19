@@ -1,10 +1,19 @@
 const admin = require("firebase-admin");
-// const axios = require("axios");
-// const {User}=  require ("../../../user/models/user.model")
-// Initialize Firebase Admin SDK
-admin.initializeApp({
-  credential: admin.credential.cert(require("./serviceAccountKey.json")),
-});
+
+const serviceAccount = JSON.parse(
+  process.env.FIREBASE_SERVICE_ACCOUNT,
+);
+
+// Railway sometimes stores \n as escaped characters
+serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, "\n");
+
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+}
+
+console.log("✅ Firebase initialized successfully");
 
 console.log("Firebase initialized successfully");
 admin.messaging().send({
