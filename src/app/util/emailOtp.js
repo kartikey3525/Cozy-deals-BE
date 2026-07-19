@@ -5,15 +5,15 @@ const transporter = nodemailer.createTransport({
   port: 587,
   secure: false, // true for port 465, false for other ports
   auth: {
-    user: "priyankakridemo93@gmail.com",
-    pass: "ozwb zicp cbny bpqx",
+    user: "kartikeykapoor25@gmail.com",
+    pass: "fwas hncy ltby brou",
   },
 });
 
 exports.emailOtp = async (email, smsBody, otp) => {
   try {
     const info = await transporter.sendMail({
-      from: '"service application 👻" <priyankakridemo93@gmail.com>', // sender address
+      from: '"service application 👻" <kartikeykapoor25@gmail.com>', // sender address
       to: email, // "bar@example.com, baz@example.com", // list of receivers
       subject: "Otp for email verification", // Subject line
       text: smsBody, // plain text body
@@ -117,6 +117,7 @@ exports.emailOtp = async (email, smsBody, otp) => {
     console.log("Message sent: %s", info.messageId);
     return "ok";
   } catch (error) {
-    console.log(error.message);
+    console.error("Email send failed:", error);
+    throw error;
   }
 };

@@ -63,38 +63,64 @@ const sendOTP = async (body) => {
   ).toString();
 
   if (foundUser) {
-    if (isValid(body.forgot) && body.forgot == true) {
+
+    // Forgot password flow
+    if (isValid(body.forgot) && body.forgot === true) {
       foundUser.forgotPassword = cipherPassword;
-    } else {
-      if (foundUser.isVerified === true) {
-        let decryptPassword = CryptoJS.AES.decrypt(
-          foundUser.password,
-          process.env.crypto_secret_key
-        ).toString(CryptoJS.enc.Utf8);
-
-        if (decryptPassword != password) throw msg.invalidPassword;
-      } else foundUser.password = cipherPassword;
+      foundUser.otp = ciphertext;
+      foundUser.otpDate = newDate;
+  
+      if (isValid(body.fcmToken)) {
+        foundUser.fcmToken = body.fcmToken;
+      }
+  
+      await foundUser.save();
     }
-    foundUser.otp = ciphertext;
-    foundUser.otpDate = newDate;
-    if (isValid(body.fcmToken)) foundUser.fcmToken = body.fcmToken;
-    await foundUser.save();
+  
+    // Existing verified account
+    else if (foundUser.isVerified) {
+      throw "User already registered. Please login.";
+    }
+  
+    // Existing but not verified
+    else {
+      foundUser.password = cipherPassword;
+      foundUser.otp = ciphertext;
+      foundUser.otpDate = newDate;
+  
+      if (isValid(body.fcmToken)) {
+        foundUser.fcmToken = body.fcmToken;
+      }
+  
+      await foundUser.save();
+    }
+  
   } else {
-    // if (roleId != 1 && roleId != 2) body.status = "approved";
-    if (roleId == 1) body.role = "seller";
-    // else if (roleId == 2) body.role = "admin";
-
+  
+    if (roleId == 1) {
+      body.role = "seller";
+    }
+  
     body.password = cipherPassword;
-    const createuser = await User.create(body);
+    body.otp = ciphertext;
+    body.otpDate = newDate;
+  
+    await User.create(body);
   }
 
   if (isValid(body.email)) {
-    let abc = emailOtp(
-      body.email,
-      `Please enter this OTP ${OTP} . This code is valid for 10 minutes`,
-      OTP
-    );
-    console.log(abc, "===============");
+    try {
+      const result = await emailOtp(
+        body.email,
+        `Please enter this OTP ${OTP}. This code is valid for 10 minutes`,
+        OTP
+      );
+  
+      console.log("Email sent:", result);
+    } catch (err) {
+      console.error("Email OTP Error:", err);
+      throw err;
+    }
   } else if (isValid(body.phone)) {
     let phoneNumber = `${countryCode}${body.phone}`;
     let abc = sendSmsFromSpringedge(
@@ -533,11 +559,16 @@ const googleLogin = async (body) => {
       name,
       email,
       profile: [picture],
-      fcmToken, // Save FCM token
-    });
+      roleId: body.roleId || 0,
+      role: body.roleId == 1 ? "seller" : "buyer",
+      isVerified: true,
+      fcmToken,
+  });
   } else {
     // Update FCM token for existing user
     user.fcmToken = fcmToken;
+    user.roleId = body.roleId || user.roleId;
+    user.role = body.roleId == 1 ? "seller" : user.role;
   }
 
   await user.save();

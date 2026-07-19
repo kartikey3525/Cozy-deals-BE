@@ -35,9 +35,25 @@ const RequirementPostSchema = new mongoose.Schema(
     },
 
     location: {
-      type: String,
-      trim: true,
-    },
+      address: {
+          type: String,
+          default: "",
+      },
+      city: {
+          type: String,
+          default: "",
+      },
+      state: {
+          type: String,
+          default: "",
+      },
+      country: {
+          type: String,
+          default: "",
+      },
+      latitude: Number,
+      longitude: Number,
+  },
 
     locationUrl: {
       type: String,

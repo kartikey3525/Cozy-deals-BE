@@ -8,8 +8,15 @@ const { User } = require("../../../user/models/user.model");
 
 const postRequirement = async (user, body) => {
   body.userId = user._id;
-  const create = await RequirementPost.create(body);
-  pushnotificationdemo(body.categories);
+
+  await RequirementPost.create(body);
+
+  try {
+    await pushnotificationdemo(body.categories);
+  } catch (err) {
+    console.log("Notification error:", err);
+  }
+
   return {
     msg: msg.success,
   };
